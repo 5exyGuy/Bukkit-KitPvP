@@ -1,0 +1,6 @@
+name: KitPvP
+version: ${project.version}
+main: eu.spikedpvp.kitpvp.KitPvP
+api-version: 1.13
+authors: [5exyGuy]
+depend: [Vault]
