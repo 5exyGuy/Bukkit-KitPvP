@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="target">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/target/original-KitPvP-1.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/KitPvP-1.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/target/KitPvP-1.0-SNAPSHOT-shaded.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
