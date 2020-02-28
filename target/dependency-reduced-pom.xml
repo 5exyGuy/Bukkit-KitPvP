@@ -70,7 +70,11 @@
           <relocations>
             <relocation>
               <pattern>co.aikar.commands</pattern>
-              <shadedPattern>eu.spikedpvp.kitpvp.acf</shadedPattern>
+              <shadedPattern>com.escapeg.kitpvp.acf</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>co.aikar.idb</pattern>
+              <shadedPattern>com.escapeg.kitpvp.idb</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

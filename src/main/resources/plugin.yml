@@ -1,6 +1,5 @@
 name: KitPvP
 version: ${project.version}
-main: eu.spikedpvp.kitpvp.KitPvP
-api-version: 1.13
+main: com.escapeg.kitpvp.KitPvP
+api-version: '1.15'
 authors: [5exyGuy]
-depend: [Vault]
