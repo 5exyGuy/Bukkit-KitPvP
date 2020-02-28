@@ -28,15 +28,13 @@ public final class PlayerHandler implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
-        final PlayerExtended playerExtended;
+        final PlayerExtended playerExtended = this.players.get(uuid);
 
-        if (this.players.containsKey(uuid)) {
-            playerExtended = this.players.get(uuid);
-            this.plugin.getLogger().warning(playerExtended.toString());
+        if (playerExtended != null) {
             ConnectionCompleteEvent connectionCompleteEvent = new ConnectionCompleteEvent(playerExtended);
             connectionCompleteEvent.callEvent();
             return;
@@ -45,24 +43,24 @@ public final class PlayerHandler implements Listener {
         PlayerExtended.create(player, this.plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        final Player player = event.getPlayer();
-        final UUID uuid = player.getUniqueId();
-        final PlayerExtended playerExtended = players.get(uuid);
-
-        if (playerExtended != null) {
-            playerExtended.save();
-        }
+//        final Player player = event.getPlayer();
+//        final UUID uuid = player.getUniqueId();
+//        final PlayerExtended playerExtended = this.players.get(uuid);
+//
+//        if (playerExtended != null) {
+//            playerExtended.save();
+//        }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLevelChange(final PlayerLevelChangeEvent event) {
         final Player player = event.getPlayer();
         player.sendActionBar("[" + event.getOldLevel() + "] -> [" + event.getNewLevel() + "]");
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerPickupExperience(final PlayerPickupExperienceEvent event) {
         event.setCancelled(true);
     }

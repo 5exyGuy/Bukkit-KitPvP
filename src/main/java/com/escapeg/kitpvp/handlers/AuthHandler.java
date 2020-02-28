@@ -1,10 +1,10 @@
 package com.escapeg.kitpvp.handlers;
 
+import com.escapeg.kitpvp.events.NewConnectionCompleteEvent;
 import com.google.inject.Inject;
 import com.escapeg.kitpvp.KitPvP;
 import com.escapeg.kitpvp.events.ConnectionCompleteEvent;
 import com.escapeg.kitpvp.extenders.PlayerExtended;
-import com.escapeg.kitpvp.ui.AuthUI;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,22 +19,25 @@ import java.util.UUID;
 public final class AuthHandler implements Listener {
 
     private final KitPvP plugin;
-    private final AuthUI authUI;
 
     @Inject
     public AuthHandler(final KitPvP plugin) {
         this.plugin = plugin;
-        this.authUI = new AuthUI(plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onConnectionComplete(final ConnectionCompleteEvent event) {
         final PlayerExtended playerExtended = event.getPlayerExtended();
-        this.plugin.getPlayers().put(playerExtended.getPlayer().getUniqueId(), playerExtended);
-        this.authUI.open(playerExtended);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onNewConnectionComplete(final NewConnectionCompleteEvent event) {
+        final PlayerExtended playerExtended = event.getPlayerExtended();
+        final UUID uuid = playerExtended.getPlayer().getUniqueId();
+        this.plugin.getPlayers().put(uuid, playerExtended);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerMove(final PlayerMoveEvent event) {
         final UUID uuid = event.getPlayer().getUniqueId();
         final PlayerExtended playerExtended = this.plugin.getPlayers().get(uuid);
@@ -49,7 +52,7 @@ public final class AuthHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
         if(event.getDamage() >= 0.0) {
             final Entity damaged = event.getEntity();
@@ -70,7 +73,7 @@ public final class AuthHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
         final UUID uuid = event.getPlayer().getUniqueId();
         final PlayerExtended playerExtended = this.plugin.getPlayers().get(uuid);
@@ -85,7 +88,7 @@ public final class AuthHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityPickupItem(final EntityPickupItemEvent event) {
         final Entity entity = event.getEntity();
         if(entity instanceof Player) {
@@ -103,7 +106,7 @@ public final class AuthHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
         final UUID uuid = event.getPlayer().getUniqueId();
         final PlayerExtended playerExtended = this.plugin.getPlayers().get(uuid);
@@ -118,7 +121,7 @@ public final class AuthHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerDropItem(final PlayerDropItemEvent event) {
         final UUID uuid = event.getPlayer().getUniqueId();
         final PlayerExtended playerExtended = this.plugin.getPlayers().get(uuid);
@@ -133,7 +136,7 @@ public final class AuthHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(final PlayerInteractEvent event) {
         final UUID uuid = event.getPlayer().getUniqueId();
         final PlayerExtended playerExtended = this.plugin.getPlayers().get(uuid);

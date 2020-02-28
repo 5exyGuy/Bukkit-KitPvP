@@ -3,6 +3,7 @@ package com.escapeg.kitpvp.extenders;
 import com.escapeg.kitpvp.KitPvP;
 import com.escapeg.kitpvp.database.SQL;
 import com.escapeg.kitpvp.events.ConnectionCompleteEvent;
+import com.escapeg.kitpvp.events.NewConnectionCompleteEvent;
 import com.escapeg.kitpvp.utilities.Console;
 import org.bukkit.entity.Player;
 
@@ -62,20 +63,23 @@ public final class PlayerExtended {
 
                 this.plugin.getSQL().insertData(values, tableName);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             this.player.kickPlayer("Įvyko klaida, bandant gauti Jūsų duomenis iš duomenų bazės");
             Console.sendError(e.getMessage());
             return;
         }
 
-        ConnectionCompleteEvent connectionCompleteEvent = new ConnectionCompleteEvent(this);
-        connectionCompleteEvent.callEvent();
+        NewConnectionCompleteEvent newConnectionCompleteEvent = new NewConnectionCompleteEvent(this);
+        newConnectionCompleteEvent.callEvent();
     }
 
     public void save() {
         final HashMap<String, Object> values = new HashMap<>();
+        values.put("pin", this.PIN);
         values.put("level", this.level);
         values.put("experience", this.experience);
+        values.put("coins", this.coins);
+        values.put("skill_points", this.skillPoints);
 
         final HashMap<String, Object> conditions = new HashMap<>();
         conditions.put("uuid", this.player.getUniqueId().toString());
@@ -88,7 +92,7 @@ public final class PlayerExtended {
     }
 
     public boolean isAuthenticated() {
-        return this.isAuthenticated;
+        return !this.isAuthenticated;
     }
 
     public void setPIN(final String PIN) {

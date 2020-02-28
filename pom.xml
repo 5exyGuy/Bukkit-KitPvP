@@ -67,12 +67,6 @@
                   </excludes>
                 </filter>
                 <filter>
-                  <artifact>fr.minuskube.inv:smart-invs</artifact>
-                  <excludes>
-                    <exclude>plugin.yml</exclude>
-                  </excludes>
-                </filter>
-                <filter>
                   <artifact>junit:junit</artifact>
                   <excludes>
                     <exclude>LICENSE.txt</exclude>
@@ -112,6 +106,10 @@
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
+    <repository>
+      <id>mojang</id>
+      <url>https://libraries.minecraft.net/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -132,11 +130,6 @@
       <version>4.2.2</version>
     </dependency>
     <dependency>
-      <groupId>fr.minuskube.inv</groupId>
-      <artifactId>smart-invs</artifactId>
-      <version>1.2.7</version>
-    </dependency>
-    <dependency>
       <groupId>co.aikar</groupId>
       <artifactId>taskchain-bukkit</artifactId>
       <version>3.7.2</version>
@@ -151,21 +144,15 @@
       <artifactId>HikariCP</artifactId>
       <version>2.4.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.mojang</groupId>
+      <artifactId>authlib</artifactId>
+      <version>1.5.21</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>5.0.0.Alpha2</version>
+    </dependency>
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.destroystokyo.paper</groupId>
-        <artifactId>paper-api</artifactId>
-        <version>1.15.2-R0.1-SNAPSHOT</version>
-        <exclusions>
-          <exclusion>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-chat</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 </project>

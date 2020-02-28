@@ -2,17 +2,16 @@ package com.escapeg.kitpvp.events;
 
 import com.escapeg.kitpvp.extenders.PlayerExtended;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public final class ConnectionCompleteEvent extends Event {
+public class NewConnectionCompleteEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
     private final PlayerExtended playerExtended;
 
-    public ConnectionCompleteEvent(final PlayerExtended playerExtended) {
+    public NewConnectionCompleteEvent(final PlayerExtended playerExtended) {
         this.playerExtended = playerExtended;
     }
 
