@@ -1,8 +1,8 @@
-package me.wolfyscript.utilities.api.utils.particles;
+package com.escapeg.kitpvp.api.utils.particles;
 
+import com.escapeg.kitpvp.api.utils.NamespacedKey;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.JsonConfiguration;
-import me.wolfyscript.utilities.api.utils.NamespacedKey;
 
 import java.io.File;
 import java.util.LinkedHashMap;

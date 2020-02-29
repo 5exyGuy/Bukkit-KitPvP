@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.JsonConfiguration;

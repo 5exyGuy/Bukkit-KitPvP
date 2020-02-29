@@ -1,6 +1,6 @@
-package me.wolfyscript.utilities.api.language;
+package com.escapeg.kitpvp.api.language;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.API;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.MemoryConfiguration;
 
@@ -51,7 +51,7 @@ public class Language {
     }
 
     public String replaceColoredKeys(String msg){
-        return WolfyUtilities.translateColorCodes(replaceKeys(msg));
+        return API.translateColorCodes(replaceKeys(msg));
     }
 
     public List<String> replaceKeys(String... msg) {

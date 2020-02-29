@@ -1,20 +1,20 @@
-package me.wolfyscript.utilities.api.utils.sql;
+package com.escapeg.kitpvp.api.utils.sql;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.API;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.*;
 
 public class SQLDataBase {
 
-    private WolfyUtilities api;
+    private API api;
 
     private Connection connection;
 
     private String host, database, username, password;
     private int port;
 
-    public SQLDataBase(WolfyUtilities api, String host, String database, String username, String password, int port) {
+    public SQLDataBase(API api, String host, String database, String username, String password, int port) {
         this.api = api;
 
         this.host = host;
@@ -107,7 +107,4 @@ public class SQLDataBase {
         return connection;
     }
 
-    public WolfyUtilities getApi() {
-        return api;
-    }
 }

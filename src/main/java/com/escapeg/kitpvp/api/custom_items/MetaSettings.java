@@ -1,7 +1,6 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
-import me.wolfyscript.utilities.api.custom_items.meta.*;
-import me.wolfyscript.utilities.main.Main;
+import com.escapeg.kitpvp.api.custom_items.meta.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

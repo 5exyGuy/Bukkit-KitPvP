@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.utils.chat;
+package com.escapeg.kitpvp.api.utils.chat;
 
 public class ClickEvent implements ChatEvent<net.md_5.bungee.api.chat.ClickEvent.Action, String> {
 

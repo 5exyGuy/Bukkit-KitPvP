@@ -1,28 +1,19 @@
-package me.wolfyscript.utilities.api.language;
+package com.escapeg.kitpvp.api.language;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import org.bukkit.plugin.Plugin;
+import com.escapeg.kitpvp.KitPvP;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LanguageAPI {
 
-    private Plugin plugin;
-
+    private KitPvP plugin;
     private ArrayList<Language> languages;
-
     private Language activeLanguage;
 
-    //private HashMap<String, Language> playerLanguage;
-
-    public LanguageAPI(Plugin plugin) {
+    public LanguageAPI(KitPvP plugin) {
         this.plugin = plugin;
         this.languages = new ArrayList<>();
         this.activeLanguage = null;
-        //this.playerLanguage = new HashMap<>();
     }
 
     public void unregisterLanguages() {
@@ -54,14 +45,4 @@ public class LanguageAPI {
         return getActiveLanguage().replaceColoredKeys(msg);
     }
 
-    /*
-    public void setPlayerLanguage(Player player, Language language){
-        playerLanguage.put(player.getUniqueId().toString(), language);
-    }
-
-    public Language getPlayerLanguage(Player player){
-        return playerLanguage.get(player.getUniqueId().toString());
-    }
-
-    */
 }

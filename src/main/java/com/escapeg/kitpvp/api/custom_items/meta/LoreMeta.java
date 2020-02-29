@@ -1,9 +1,9 @@
-package me.wolfyscript.utilities.api.custom_items.meta;
+package com.escapeg.kitpvp.api.custom_items.meta;
 
 
-import me.wolfyscript.utilities.api.custom_items.Meta;
-import me.wolfyscript.utilities.api.custom_items.MetaSettings;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.custom_items.Meta;
+import com.escapeg.kitpvp.api.custom_items.MetaSettings;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class LoreMeta extends Meta {
             List<String> lore = itemMeta.getLore();
             Iterator<String> loreItr = lore.iterator();
             while (loreItr.hasNext()) {
-                String line = WolfyUtilities.unhideString(loreItr.next());
+                String line = API.unhideString(loreItr.next());
                 if (line.startsWith("durability_tag") || line.startsWith("itemSettings") || line.startsWith("WU_Durability")) {
                     loreItr.remove();
                 }

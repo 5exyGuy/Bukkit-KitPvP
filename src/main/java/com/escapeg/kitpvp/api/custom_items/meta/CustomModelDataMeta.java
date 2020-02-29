@@ -1,9 +1,8 @@
-package me.wolfyscript.utilities.api.custom_items.meta;
+package com.escapeg.kitpvp.api.custom_items.meta;
 
 
-import me.wolfyscript.utilities.api.custom_items.Meta;
-import me.wolfyscript.utilities.api.custom_items.MetaSettings;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.custom_items.Meta;
+import com.escapeg.kitpvp.api.custom_items.MetaSettings;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class CustomModelDataMeta extends Meta {
@@ -16,17 +15,15 @@ public class CustomModelDataMeta extends Meta {
 
     @Override
     public boolean check(ItemMeta meta1, ItemMeta meta2) {
-        if (WolfyUtilities.hasVillagePillageUpdate()) {
-            switch (option) {
-                case IGNORE:
-                    meta1.setCustomModelData(0);
-                    meta2.setCustomModelData(0);
-                    return true;
-                case LOWER:
-                    return meta1.getCustomModelData() < meta2.getCustomModelData();
-                case HIGHER:
-                    return meta1.getCustomModelData() > meta2.getCustomModelData();
-            }
+        switch (option) {
+            case IGNORE:
+                meta1.setCustomModelData(0);
+                meta2.setCustomModelData(0);
+                return true;
+            case LOWER:
+                return meta1.getCustomModelData() < meta2.getCustomModelData();
+            case HIGHER:
+                return meta1.getCustomModelData() > meta2.getCustomModelData();
         }
         return true;
     }

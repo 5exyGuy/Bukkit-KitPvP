@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.utils.chat;
+package com.escapeg.kitpvp.api.utils.chat;
 
 import me.wolfyscript.utilities.api.utils.ItemUtils;
 import net.md_5.bungee.api.chat.BaseComponent;

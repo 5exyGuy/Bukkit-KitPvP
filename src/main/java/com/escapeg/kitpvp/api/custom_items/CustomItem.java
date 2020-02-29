@@ -1,5 +1,9 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.custom_items.custom_data.CustomData;
+import com.escapeg.kitpvp.api.utils.InventoryUtils;
+import com.escapeg.kitpvp.api.utils.ItemUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.custom_items.custom_data.CustomData;
 import me.wolfyscript.utilities.api.utils.InventoryUtils;
@@ -25,17 +29,8 @@ import java.util.List;
 
 public class CustomItem extends ItemStack implements Cloneable {
 
-    //This HashMap contains all the available CustomData objects, which then can be saved and loaded.
-    //If the config contains CustomData that is not available in this HashMap, then it won't be loaded!
     private static HashMap<String, CustomData> availableCustomData = new HashMap<>();
-
-    /*
-    Other than the availableCustomData, this Map is only available for the specific CustomItem instance!
-    All registered CustomData is added to this item and cannot be removed!
-    Only the single CustomData objects can be edit in it's values.
-     */
     private HashMap<String, CustomData> customDataMap = new HashMap<>();
-
     private ItemConfig config;
     private String id;
     private String permission;
@@ -156,10 +151,10 @@ public class CustomItem extends ItemStack implements Cloneable {
         ItemStack idItem = new ItemStack(this.clone());
         if (!this.id.isEmpty()) {
             ItemMeta idItemMeta = idItem.getItemMeta();
-            if (idItemMeta.hasDisplayName() && !WolfyUtilities.unhideString(idItemMeta.getDisplayName()).endsWith(":id_item")) {
-                idItemMeta.setDisplayName(idItemMeta.getDisplayName() + WolfyUtilities.hideString(":id_item"));
+            if (idItemMeta.hasDisplayName() && !API.unhideString(idItemMeta.getDisplayName()).endsWith(":id_item")) {
+                idItemMeta.setDisplayName(idItemMeta.getDisplayName() + API.hideString(":id_item"));
             } else {
-                idItemMeta.setDisplayName(WolfyUtilities.hideString("%NO_NAME%") + "§r" + WordUtils.capitalizeFully(idItem.getType().name().replace("_", " ")) + WolfyUtilities.hideString(":id_item"));
+                idItemMeta.setDisplayName(API.hideString("%NO_NAME%") + "§r" + WordUtils.capitalizeFully(idItem.getType().name().replace("_", " ")) + WolfyUtilities.hideString(":id_item"));
             }
             List<String> lore = idItemMeta.hasLore() ? idItemMeta.getLore() : new ArrayList<>();
             lore.add("");
@@ -261,22 +256,11 @@ public class CustomItem extends ItemStack implements Cloneable {
         return customItem;
     }
 
-    /*
-    This will call the super.clone() method to get the ItemStack.
-    All CustomItem variables will get lost!
-    @Deprecated     This will not provide the ItemStack with an NBT which stores the CustomItem id!
-                    So it would be impossible to check to which CustomItem this ItemStack belongs to.
-                    getItemStack() or getRealItem() should be used instead!
-     */
-
     @Deprecated
     public ItemStack getAsItemStack() {
         return super.clone();
     }
 
-    /*
-    This just refers to the getRealItem() and only returns an ItemStack Object, but the name might be more useful.
-     */
     public ItemStack getItemStack() {
         return getRealItem();
     }
@@ -288,11 +272,7 @@ public class CustomItem extends ItemStack implements Cloneable {
                 customItem.setAmount(this.getAmount());
             }
             ItemMeta itemMeta = customItem.getItemMeta();
-            if (WolfyUtilities.hasVillagePillageUpdate()) {
-                itemMeta.getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(), "custom_item"), PersistentDataType.STRING, customItem.getId());
-            } else {
-                ItemUtils.setToItemSettings(itemMeta, "custom_item", customItem.getId());
-            }
+            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(), "custom_item"), PersistentDataType.STRING, customItem.getId());
             customItem.setItemMeta(itemMeta);
             return customItem;
         }
@@ -308,14 +288,8 @@ public class CustomItem extends ItemStack implements Cloneable {
             ItemMeta itemMeta = itemStack.getItemMeta();
             if (itemMeta != null) {
                 CustomItem customItem = null;
-                if (WolfyUtilities.hasVillagePillageUpdate()) {
-                    if (itemMeta.getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "custom_item"), PersistentDataType.STRING)) {
-                        customItem = CustomItems.getCustomItem(itemMeta.getPersistentDataContainer().get(new NamespacedKey(Main.getInstance(), "custom_item"), PersistentDataType.STRING));
-                    }
-                } else {
-                    if (ItemUtils.isInItemSettings(itemMeta, "custom_item")) {
-                        customItem = CustomItems.getCustomItem((String) ItemUtils.getFromItemSettings(itemMeta, "custom_item"));
-                    }
+                if (itemMeta.getPersistentDataContainer().has(new NamespacedKey(Main.getInstance(), "custom_item"), PersistentDataType.STRING)) {
+                    customItem = CustomItems.getCustomItem(itemMeta.getPersistentDataContainer().get(new NamespacedKey(Main.getInstance(), "custom_item"), PersistentDataType.STRING));
                 }
                 if (customItem != null) {
                     customItem.setAmount(itemStack.getAmount());
@@ -330,7 +304,7 @@ public class CustomItem extends ItemStack implements Cloneable {
 
     private static boolean isIDItem(ItemStack itemStack) {
         if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName()) {
-            String name = WolfyUtilities.unhideString(itemStack.getItemMeta().getDisplayName());
+            String name = API.unhideString(itemStack.getItemMeta().getDisplayName());
             return name.endsWith(":id_item");
         }
         return false;
@@ -392,10 +366,8 @@ public class CustomItem extends ItemStack implements Cloneable {
                     case RABBIT_STEW:
                         input.setType(Material.BOWL);
                 }
-                if (WolfyUtilities.hasBuzzyBeesUpdate()) {
-                    if (input.getType().equals(Material.HONEY_BOTTLE)) {
-                        input.setType(Material.GLASS_BOTTLE);
-                    }
+                if (input.getType().equals(Material.HONEY_BOTTLE)) {
+                    input.setType(Material.GLASS_BOTTLE);
                 }
             }
             if (this.hasReplacement()) {
@@ -406,16 +378,9 @@ public class CustomItem extends ItemStack implements Cloneable {
                 input.setAmount(replace.getAmount());
                 return;
             } else if (this.getDurabilityCost() != 0) {
-                if (WolfyUtilities.hasVillagePillageUpdate()) {
-                    if (CustomItem.hasCustomDurability(input)) {
-                        CustomItem.setCustomDamage(input, CustomItem.getCustomDamage(input) + this.getDurabilityCost());
-                        return;
-                    }
-                } else {
-                    if (ItemUtils.hasCustomDurability(input)) {
-                        ItemUtils.setDamage(input, ItemUtils.getDamage(input) + this.getDurabilityCost());
-                        return;
-                    }
+                if (CustomItem.hasCustomDurability(input)) {
+                    CustomItem.setCustomDamage(input, CustomItem.getCustomDamage(input) + this.getDurabilityCost());
+                    return;
                 }
                 ItemMeta itemMeta = input.getItemMeta();
                 if (itemMeta instanceof Damageable) {
@@ -448,11 +413,9 @@ public class CustomItem extends ItemStack implements Cloneable {
                     input.setType(Material.BOWL);
                     return;
             }
-            if (WolfyUtilities.hasBuzzyBeesUpdate()) {
-                if (input.getType().equals(Material.HONEY_BOTTLE)) {
-                    input.setType(Material.GLASS_BOTTLE);
-                    return;
-                }
+            if (input.getType().equals(Material.HONEY_BOTTLE)) {
+                input.setType(Material.GLASS_BOTTLE);
+                return;
             }
             input.setAmount(0);
         }
@@ -631,10 +594,10 @@ public class CustomItem extends ItemStack implements Cloneable {
 
     public static void setDurabilityTag(ItemMeta itemMeta) {
         if (itemMeta != null) {
-            String tag = WolfyUtilities.hideString("WU_Durability") + WolfyUtilities.translateColorCodes(getCustomDurabilityTag(itemMeta).replace("%dur%", String.valueOf(getCustomDurability(itemMeta) - getCustomDamage(itemMeta))).replace("%max_dur%", String.valueOf(getCustomDurability(itemMeta))));
+            String tag = API.hideString("WU_Durability") + API.translateColorCodes(getCustomDurabilityTag(itemMeta).replace("%dur%", String.valueOf(getCustomDurability(itemMeta) - getCustomDamage(itemMeta))).replace("%max_dur%", String.valueOf(getCustomDurability(itemMeta))));
             List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
             for (int i = 0; i < lore.size(); i++) {
-                String line = WolfyUtilities.unhideString(lore.get(i));
+                String line = API.unhideString(lore.get(i));
                 if (line.startsWith("WU_Durability")) {
                     lore.set(i, tag);
                     itemMeta.setLore(lore);

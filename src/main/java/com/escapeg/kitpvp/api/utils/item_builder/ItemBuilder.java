@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.utils.item_builder;
+package com.escapeg.kitpvp.api.utils.item_builder;
 
 import javax.annotation.Nonnull;
 import org.bukkit.Material;
@@ -38,13 +38,13 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addEnchantment(@Nonnull Enchantment ench, int level){
-        this.currentItem.addEnchantment(ench, level);
+    public ItemBuilder addEnchantment(@Nonnull Enchantment enchantment, int level){
+        this.currentItem.addEnchantment(enchantment, level);
         return this;
     }
 
-    public ItemBuilder addUnsafeEnchantment(@Nonnull Enchantment ench, int level){
-        this.currentItem.addUnsafeEnchantment(ench, level);
+    public ItemBuilder addUnsafeEnchantment(@Nonnull Enchantment enchantment, int level){
+        this.currentItem.addUnsafeEnchantment(enchantment, level);
         return this;
     }
 

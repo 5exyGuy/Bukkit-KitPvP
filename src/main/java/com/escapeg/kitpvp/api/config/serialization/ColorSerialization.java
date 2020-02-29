@@ -1,7 +1,6 @@
-package me.wolfyscript.utilities.api.config.serialization;
+package com.escapeg.kitpvp.api.config.serialization;
 
 import com.google.gson.*;
-import me.wolfyscript.utilities.main.Main;
 import org.bukkit.Color;
 
 import java.lang.reflect.Type;

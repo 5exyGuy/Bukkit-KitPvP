@@ -1,8 +1,10 @@
-package me.wolfyscript.utilities.api.utils.chat;
+package com.escapeg.kitpvp.api.utils.chat;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.API;
 import org.bukkit.entity.Player;
 
 public interface ClickAction {
-    void run(WolfyUtilities api, Player player);
+
+    void run(API api, Player player);
+
 }

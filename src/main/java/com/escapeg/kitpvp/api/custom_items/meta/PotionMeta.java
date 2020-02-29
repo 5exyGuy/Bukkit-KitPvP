@@ -1,8 +1,8 @@
-package me.wolfyscript.utilities.api.custom_items.meta;
+package com.escapeg.kitpvp.api.custom_items.meta;
 
 
-import me.wolfyscript.utilities.api.custom_items.Meta;
-import me.wolfyscript.utilities.api.custom_items.MetaSettings;
+import com.escapeg.kitpvp.api.custom_items.Meta;
+import com.escapeg.kitpvp.api.custom_items.MetaSettings;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class PotionMeta extends Meta {

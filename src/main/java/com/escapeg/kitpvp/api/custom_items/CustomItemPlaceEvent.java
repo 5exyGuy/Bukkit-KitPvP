@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
 import javax.annotation.Nonnull;
 import org.bukkit.block.Block;

@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -8,9 +8,7 @@ import java.util.List;
 public abstract class Meta {
 
     protected MetaSettings.Option option;
-
     private String id;
-
     private List<MetaSettings.Option> availableOptions;
 
     protected Meta(String id) {

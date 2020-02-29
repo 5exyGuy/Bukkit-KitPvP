@@ -1,9 +1,9 @@
-package me.wolfyscript.utilities.api.custom_items.meta;
+package com.escapeg.kitpvp.api.custom_items.meta;
 
 
+import com.escapeg.kitpvp.api.custom_items.Meta;
+import com.escapeg.kitpvp.api.custom_items.MetaSettings;
 import com.google.common.collect.Multimap;
-import me.wolfyscript.utilities.api.custom_items.Meta;
-import me.wolfyscript.utilities.api.custom_items.MetaSettings;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.meta.ItemMeta;

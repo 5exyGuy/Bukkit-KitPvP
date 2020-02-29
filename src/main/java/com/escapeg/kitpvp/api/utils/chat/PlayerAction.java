@@ -1,6 +1,6 @@
-package me.wolfyscript.utilities.api.utils.chat;
+package com.escapeg.kitpvp.api.utils.chat;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.API;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
@@ -9,16 +9,16 @@ import java.util.UUID;
 public class PlayerAction {
 
     private UUID uuid;
-    private WolfyUtilities api;
+    private API api;
 
     private TextComponent message;
     private ClickAction clickAction;
     private boolean discard;
 
-    public PlayerAction(WolfyUtilities api, Player player, ClickData clickData) {
+    public PlayerAction(API api, Player player, ClickData clickData) {
         this.uuid = player.getUniqueId();
         this.api = api;
-        this.message = new TextComponent(WolfyUtilities.translateColorCodes(api.getLanguageAPI().getActiveLanguage().replaceKeys(clickData.getMessage())));
+        this.message = new TextComponent(API.translateColorCodes(api.getLanguageAPI().getActiveLanguage().replaceKeys(clickData.getMessage())));
         this.clickAction = clickData.getClickAction();
         this.discard = clickData.isDiscard();
     }
@@ -37,11 +37,11 @@ public class PlayerAction {
         this.uuid = uuid;
     }
 
-    public WolfyUtilities getApi() {
+    public API getAPI() {
         return api;
     }
 
-    public void setApi(WolfyUtilities api) {
+    public void setApi(API api) {
         this.api = api;
     }
 

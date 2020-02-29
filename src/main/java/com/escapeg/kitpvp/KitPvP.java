@@ -1,6 +1,7 @@
 package com.escapeg.kitpvp;
 
 import co.aikar.commands.PaperCommandManager;
+import com.escapeg.kitpvp.api.API;
 import com.escapeg.kitpvp.commands.MySQLCommand;
 import com.escapeg.kitpvp.commands.SetSpawnCommand;
 import com.escapeg.kitpvp.commands.SpawnCommand;
@@ -27,6 +28,7 @@ public final class KitPvP extends JavaPlugin {
     @Inject private Config config;
     @Inject private MySQL mysql;
     @Inject private SQL sql;
+    @Inject private API api;
     // Authentication
     @Inject private AuthHandler authHandler;
     // Game

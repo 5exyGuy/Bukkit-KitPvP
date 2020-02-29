@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.custom_items.custom_data;
+package com.escapeg.kitpvp.api.custom_items.custom_data;
 
 import java.util.Map;
 

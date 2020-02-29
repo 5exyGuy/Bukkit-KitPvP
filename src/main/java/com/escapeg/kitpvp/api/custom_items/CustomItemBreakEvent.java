@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

@@ -1,10 +1,9 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
-import me.wolfyscript.utilities.api.utils.NamespacedKey;
-import me.wolfyscript.utilities.api.utils.Pair;
+import com.escapeg.kitpvp.api.utils.NamespacedKey;
+import com.escapeg.kitpvp.api.utils.Pair;
+import com.escapeg.kitpvp.api.utils.particles.ParticleEffects;
 import me.wolfyscript.utilities.api.utils.particles.ParticleEffect;
-import me.wolfyscript.utilities.api.utils.particles.ParticleEffects;
-import me.wolfyscript.utilities.main.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

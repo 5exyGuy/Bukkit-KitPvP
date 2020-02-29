@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.utils.particles;
+package com.escapeg.kitpvp.api.utils.particles;
 
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.JsonConfiguration;

@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.custom_items.equipment;
+package com.escapeg.kitpvp.api.custom_items.equipment;
 
 import org.bukkit.inventory.EquipmentSlot;
 

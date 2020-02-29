@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.utils.chat;
+package com.escapeg.kitpvp.api.utils.chat;
 
 public interface ChatEvent<A, V> {
 

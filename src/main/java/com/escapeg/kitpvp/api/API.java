@@ -1,6 +1,7 @@
 package com.escapeg.kitpvp.api;
 
 import com.escapeg.kitpvp.KitPvP;
+import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.netty.buffer.ByteBuf;
@@ -40,39 +41,15 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WolfyUtilities implements Listener {
-
-    private static HashMap<Plugin, WolfyUtilities> wolfyUtilitiesList = new HashMap<>();
-    private static CustomItems customItems;
-
-    public static CustomItems getCustomItems() {
-        return customItems;
-    }
-
-    public static void registerAPI(WolfyUtilities wolfyUtilities) {
-        if (!hasAPI(wolfyUtilities.getPlugin())) {
-            wolfyUtilitiesList.put(wolfyUtilities.getPlugin(), wolfyUtilities);
-        }
-    }
+public class API implements Listener {
 
     private static HashMap<UUID, PlayerAction> clickDataMap = new HashMap<>();
 
-    public static boolean hasAPI(Plugin plugin) {
-        return wolfyUtilitiesList.containsKey(plugin);
-    }
-
-    public static WolfyUtilities getOrCreateAPI(Plugin plugin) {
-        if (!hasAPI(plugin)) {
-            registerAPI(new WolfyUtilities(plugin));
-        }
-        return wolfyUtilitiesList.get(plugin);
-    }
-
     public static String getCode() {
-        Random random = new Random();
-        String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final Random random = new Random();
+        final String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         final int x = alphabet.length();
-        StringBuilder sB = new StringBuilder();
+        final StringBuilder sB = new StringBuilder();
 
         for (int i = 0; i < 16; i++) {
             sB.append(alphabet.charAt(random.nextInt(x)));
@@ -86,11 +63,11 @@ public class WolfyUtilities implements Listener {
             value = getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
         }
 
-        return getSkullByValue(value);
+        return API.getSkullByValue(value);
     }
 
     public static ItemStack getSkullViaURL(String value) {
-        return getCustomHead("http://textures.minecraft.net/texture/" + value);
+        return API.getCustomHead("http://textures.minecraft.net/texture/" + value);
     }
 
     public static ItemStack getSkullByValue(String value) {
@@ -315,11 +292,6 @@ public class WolfyUtilities implements Listener {
         return cleared;
     }
 
-    @Nullable
-    public static WolfyUtilities getAPI(Plugin plugin) {
-        return wolfyUtilitiesList.get(plugin);
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void actionCommands(AsyncPlayerChatEvent event) {
         if (event.getMessage() != null && event.getMessage().startsWith("wu::")) {
@@ -347,9 +319,6 @@ public class WolfyUtilities implements Listener {
     }
 
     private KitPvP plugin;
-    private String CONSOLE_PREFIX;
-    private String CHAT_PREFIX;
-    private String databasePrefix;
     private ConfigAPI configAPI;
     private InventoryAPI inventoryAPI;
     private LanguageAPI languageAPI;
@@ -359,18 +328,17 @@ public class WolfyUtilities implements Listener {
         clickDataMap.keySet().removeIf(uuid -> clickDataMap.get(uuid).getUuid().equals(event.getPlayer().getUniqueId()));
     }
 
-    public WolfyUtilities(KitPvP plugin) {
+    @Inject
+    public API(KitPvP plugin) {
         this.plugin = plugin;
-        this.databasePrefix = plugin.getName().toLowerCase(Locale.ROOT) + "_";
-        registerAPI(this);
-        customItems = new CustomItems(plugin);
-        inventoryAPI = new InventoryAPI<>(this.plugin, this, CustomCache.class);
+        this.inventoryAPI = new InventoryAPI<>(this.plugin, this, CustomCache.class);
     }
 
     public LanguageAPI getLanguageAPI() {
         if (!hasLanguageAPI()) {
             languageAPI = new LanguageAPI(this.plugin);
         }
+
         return languageAPI;
     }
 
@@ -379,7 +347,7 @@ public class WolfyUtilities implements Listener {
     }
 
     public ConfigAPI getConfigAPI() {
-        if (!hasConfigAPI()) {
+        if (!this.hasConfigAPI()) {
             configAPI = new ConfigAPI(this);
         }
         return configAPI;
@@ -393,12 +361,12 @@ public class WolfyUtilities implements Listener {
         return getInventoryAPI(inventoryAPI.craftCustomCache().getClass());
     }
 
-    public <T extends CustomCache> InventoryAPI<T> getInventoryAPI(Class<T> type){
-        if(hasInventoryAPI() && type.isInstance(inventoryAPI.craftCustomCache())){
+    public <T extends CustomCache> InventoryAPI<T> getInventoryAPI(final Class<T> type) {
+        if (this.hasInventoryAPI() && type.isInstance(inventoryAPI.craftCustomCache())) {
             return (InventoryAPI<T>) inventoryAPI;
-        }else if(!hasInventoryAPI()){
-            inventoryAPI = new InventoryAPI<>(plugin, this, type);
-            return inventoryAPI;
+        } else if(!this.hasInventoryAPI()) {
+            this.inventoryAPI = new InventoryAPI<>(plugin, this, type);
+            return this.inventoryAPI;
         }
         throw new InvalidCacheTypeException("Cache type "+type.getName()+" expected, got "+inventoryAPI.craftCustomCache().getClass().getName()+"!");
     }
@@ -408,100 +376,34 @@ public class WolfyUtilities implements Listener {
     }
 
     public boolean hasInventoryAPI() {
-        return inventoryAPI != null;
+        return this.inventoryAPI != null;
     }
 
     public boolean hasLanguageAPI() {
-        return languageAPI != null;
+        return this.languageAPI != null;
     }
 
     public boolean hasConfigAPI() {
-        return configAPI != null;
-    }
-
-    public Plugin getPlugin() {
-        return plugin;
-    }
-
-    public void setCONSOLE_PREFIX(String CONSOLE_PREFIX) {
-        this.CONSOLE_PREFIX = CONSOLE_PREFIX;
-    }
-
-    public void setCHAT_PREFIX(String CHAT_PREFIX) {
-        this.CHAT_PREFIX = CHAT_PREFIX;
-    }
-
-    public String getCHAT_PREFIX() {
-        return CHAT_PREFIX;
-    }
-
-    public String getCONSOLE_PREFIX() {
-        return CONSOLE_PREFIX;
-    }
-
-    public String getDataBasePrefix() {
-        return databasePrefix;
-    }
-
-    public void setDataBasePrefix(String dataBasePrefix) {
-        this.dataBasePrefix = dataBasePrefix;
+        return this.configAPI != null;
     }
 
     public boolean hasDebuggingMode() {
-        if (getConfigAPI().getConfig("main_config") instanceof Config) {
-            return ((Config) getConfigAPI().getConfig("main_config")).getBoolean("debug");
+        if (this.getConfigAPI().getConfig("main_config") instanceof Config) {
+            return ((Config) this.getConfigAPI().getConfig("main_config")).getBoolean("debug");
         }
         return false;
-    }
-
-    public void sendConsoleMessage(String message) {
-        message = CONSOLE_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        Main.getInstance().getServer().getConsoleSender().sendMessage(message);
-    }
-
-    public void sendConsoleWarning(String message) {
-        message = CONSOLE_PREFIX + "[WARN] " + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        Main.getInstance().getServer().getConsoleSender().sendMessage(message);
-    }
-
-    public void sendConsoleMessage(String message, String... replacements) {
-        message = CONSOLE_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-        List<String> keys = new ArrayList<>();
-        Pattern pattern = Pattern.compile("%([A-Z]*?)(_*?)%");
-        Matcher matcher = pattern.matcher(message);
-        while (matcher.find()) {
-            keys.add(matcher.group(0));
-        }
-        for (int i = 0; i < keys.size(); i++) {
-            message = message.replace(keys.get(i), replacements[i]);
-        }
-        plugin.getServer().getConsoleSender().sendMessage(WolfyUtilities.translateColorCodes(message));
-    }
-
-    public void sendConsoleMessage(String message, String[]... replacements) {
-        if (replacements != null) {
-            message = CHAT_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-            for (String[] replace : replacements) {
-                if (replace.length > 1) {
-                    message = message.replaceAll(replace[0], replace[1]);
-                }
-            }
-        }
-        plugin.getServer().getConsoleSender().sendMessage(WolfyUtilities.translateColorCodes(message));
     }
 
     public void sendPlayerMessage(Player player, String message) {
         if (player != null) {
             message = CHAT_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-            message = WolfyUtilities.translateColorCodes(message);
+            message = API.translateColorCodes(message);
             player.sendMessage(message);
         }
     }
 
     public void sendPlayerMessage(Player player, String guiCluster, String msgKey) {
-        sendPlayerMessage(player, "$inventories."+guiCluster+".global_messages."+msgKey+"$");
+        sendPlayerMessage(player, "$inventories." + guiCluster + ".global_messages." + msgKey + "$");
     }
 
     public void sendPlayerMessage(Player player, String guiCluster, String guiWindow, String msgKey) {
@@ -531,7 +433,7 @@ public class WolfyUtilities implements Listener {
                 return;
             }
         }
-        player.sendMessage(WolfyUtilities.translateColorCodes(message));
+        player.sendMessage(API.translateColorCodes(message));
     }
 
     public void sendActionMessage(Player player, ClickData... clickData) {

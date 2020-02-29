@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.config;
+package com.escapeg.kitpvp.api.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

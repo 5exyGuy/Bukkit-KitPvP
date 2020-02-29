@@ -1,6 +1,6 @@
-package me.wolfyscript.utilities.api.custom_items;
+package com.escapeg.kitpvp.api.custom_items;
 
-import me.wolfyscript.utilities.api.utils.NamespacedKey;
+import com.escapeg.kitpvp.api.utils.NamespacedKey;
 import me.wolfyscript.utilities.api.utils.particles.ParticleEffect;
 
 import java.util.LinkedHashMap;
