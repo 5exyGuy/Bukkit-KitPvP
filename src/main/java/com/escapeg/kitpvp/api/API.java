@@ -1,8 +1,16 @@
 package com.escapeg.kitpvp.api;
 
 import com.escapeg.kitpvp.KitPvP;
+import com.escapeg.kitpvp.api.config.Config;
 import com.escapeg.kitpvp.api.config.ConfigAPI;
+import com.escapeg.kitpvp.api.inventory.InventoryAPI;
+import com.escapeg.kitpvp.api.inventory.cache.CustomCache;
+import com.escapeg.kitpvp.api.language.LanguageAPI;
+import com.escapeg.kitpvp.api.utils.chat.ChatEvent;
+import com.escapeg.kitpvp.api.utils.chat.ClickData;
+import com.escapeg.kitpvp.api.utils.chat.HoverEvent;
 import com.escapeg.kitpvp.api.utils.chat.PlayerAction;
+import com.escapeg.kitpvp.api.utils.exceptions.InvalidCacheTypeException;
 import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -24,20 +32,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.Plugin;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class API implements Listener {
 
-    private static HashMap<UUID, PlayerAction> clickDataMap = new HashMap<>();
+    private final HashMap<UUID, PlayerAction> clickDataMap = new HashMap<>();
 
-    public static String getCode() {
+    public String getCode() {
         final Random random = new Random();
         final String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         final int x = alphabet.length();
@@ -50,24 +54,24 @@ public class API implements Listener {
         return sB.toString();
     }
 
-    public static ItemStack getCustomHead(String value) {
+    public ItemStack getCustomHead(String value) {
         if (value.startsWith("http://textures")) {
             value = getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
         }
 
-        return API.getSkullByValue(value);
+        return this.getSkullByValue(value);
     }
 
-    public static ItemStack getSkullViaURL(String value) {
-        return API.getCustomHead("http://textures.minecraft.net/texture/" + value);
+    public ItemStack getSkullViaURL(final String value) {
+        return this.getCustomHead("http://textures.minecraft.net/texture/" + value);
     }
 
-    public static ItemStack getSkullByValue(String value) {
-        ItemStack itemStack  = new ItemStack(Material.PLAYER_HEAD);
+    public ItemStack getSkullByValue(final String value) {
+        final ItemStack itemStack  = new ItemStack(Material.PLAYER_HEAD);
 
         if (value != null && !value.isEmpty()) {
-            SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
-            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            final SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+            final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
             profile.getProperties().put("textures", new Property("textures", value));
             Field profileField = null;
             try {
@@ -87,7 +91,7 @@ public class API implements Listener {
         return itemStack;
     }
 
-    public static SkullMeta getSkullMeta(String value, SkullMeta skullMeta) {
+    public SkullMeta getSkullMeta(final String value, final SkullMeta skullMeta) {
         if (value != null && !value.isEmpty()) {
             String texture = value;
             if (value.startsWith("https://") || value.startsWith("http://")) {
@@ -112,7 +116,7 @@ public class API implements Listener {
         return skullMeta;
     }
 
-    private static String getBase64EncodedString(String str) {
+    private String getBase64EncodedString(final String str) {
         ByteBuf byteBuf = null;
         ByteBuf encodedByteBuf = null;
         String var3;
@@ -132,7 +136,7 @@ public class API implements Listener {
     }
 
 
-    public static String getSkullValue(SkullMeta skullMeta) {
+    public String getSkullValue(final SkullMeta skullMeta) {
         GameProfile profile = null;
         Field profileField;
         try {
@@ -148,7 +152,7 @@ public class API implements Listener {
         }
         if (profile != null) {
             if (!profile.getProperties().get("textures").isEmpty()) {
-                for (Property property : profile.getProperties().get("textures")) {
+                for (final Property property : profile.getProperties().get("textures")) {
                     if (!property.getValue().isEmpty())
                         return property.getValue();
                 }
@@ -157,10 +161,10 @@ public class API implements Listener {
         return null;
     }
 
-    public static ItemStack migrateSkullTexture(ItemStack input, ItemStack result) {
+    public ItemStack migrateSkullTexture(final ItemStack input, final ItemStack result) {
         if (input.getType().equals(Material.PLAYER_HEAD) && result.getType().equals(Material.PLAYER_HEAD)) {
-            SkullMeta inputMeta = (SkullMeta) input.getItemMeta();
-            String value = getSkullValue(inputMeta);
+            final SkullMeta inputMeta = (SkullMeta) input.getItemMeta();
+            final String value = this.getSkullValue(inputMeta);
             if (value != null && !value.isEmpty()) {
                 result.setItemMeta(getSkullMeta(value, (SkullMeta) result.getItemMeta()));
             }
@@ -168,18 +172,18 @@ public class API implements Listener {
         return result;
     }
 
-    public static ItemMeta migrateSkullTexture(SkullMeta input, ItemStack result) {
+    public ItemMeta migrateSkullTexture(final SkullMeta input, final ItemStack result) {
         if (result.getType().equals(Material.PLAYER_HEAD)) {
-            String value = getSkullValue(input);
+            final String value = getSkullValue(input);
             if (value != null && !value.isEmpty()) {
-                return getSkullMeta(value, (SkullMeta) result.getItemMeta());
+                return this.getSkullMeta(value, (SkullMeta) result.getItemMeta());
             }
         }
         return result.getItemMeta();
     }
 
-    public static String hideString(String hide) {
-        char[] data = new char[hide.length() * 2];
+    public String hideString(final String hide) {
+        final char[] data = new char[hide.length() * 2];
 
         for (int i = 0; i < data.length; i += 2) {
             data[i] = 167;
@@ -189,17 +193,17 @@ public class API implements Listener {
         return new String(data);
     }
 
-    public static String unhideString(String unhide) {
+    public String unhideString(final String unhide) {
         return unhide.replace("§", "");
     }
 
-    public static String translateColorCodes(String textToTranslate) {
-        char[] b = textToTranslate.toCharArray();
+    public String translateColorCodes(final String textToTranslate) {
+        final char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
             if (b[i] == '&') {
-                if(b[i+1] == '&'){
+                if (b[i+1] == '&') {
                     b[i + 1] = '=';
-                }else{
+                } else {
                     b[i] = 167;
                     b[i + 1] = Character.toLowerCase(b[i + 1]);
                 }
@@ -208,7 +212,7 @@ public class API implements Listener {
         return new String(b).replace("&=", "&");
     }
 
-    public static Enchantment getEnchantment(String enchantNmn) {
+    public Enchantment getEnchantment(final String enchantNmn) {
         try {
             return Enchantment.getByKey(NamespacedKey.minecraft(enchantNmn.toLowerCase()));
         } catch (Exception e) {
@@ -217,19 +221,20 @@ public class API implements Listener {
         }
     }
 
-    public static Sound getSound(String sound) {
+    public Sound getSound(final String sound) {
         return Sound.valueOf(sound);
     }
 
-    public static boolean isPlayerHead(ItemStack itemStack) {
+    public boolean isPlayerHead(final ItemStack itemStack) {
         return itemStack.getType() == Material.PLAYER_HEAD;
     }
 
-    public static boolean checkColumn(ArrayList<String> shape, int column) {
+    public boolean checkColumn(final ArrayList<String> shape, final int column) {
         boolean blocked = false;
-        for (String s : shape) {
+        for (final String s : shape) {
             if (s.charAt(column) != ' ') {
                 blocked = true;
+                break;
             }
         }
         if (!blocked) {
@@ -240,15 +245,15 @@ public class API implements Listener {
         return blocked;
     }
 
-    public static ArrayList<String> formatShape(String... shape) {
-        ArrayList<String> cleared = new ArrayList<>(Arrays.asList(shape));
-        ListIterator<String> rowIterator = cleared.listIterator();
+    public ArrayList<String> formatShape(final String... shape) {
+        final ArrayList<String> cleared = new ArrayList<>(Arrays.asList(shape));
+        final ListIterator<String> rowIterator = cleared.listIterator();
         boolean rowBlocked = false;
         while (!rowBlocked && rowIterator.hasNext()) {
-            String row = rowIterator.next();
-            if(StringUtils.isBlank(row)){
+            final String row = rowIterator.next();
+            if (StringUtils.isBlank(row)) {
                 rowIterator.remove();
-            }else{
+            } else {
                 rowBlocked = true;
             }
         }
@@ -257,10 +262,10 @@ public class API implements Listener {
         }
         rowBlocked = false;
         while (!rowBlocked && rowIterator.hasPrevious()) {
-            String row = rowIterator.previous();
-            if(StringUtils.isBlank(row)){
+            final String row = rowIterator.previous();
+            if (StringUtils.isBlank(row)) {
                 rowIterator.remove();
-            }else{
+            } else {
                 rowBlocked = true;
             }
         }
@@ -285,16 +290,17 @@ public class API implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void actionCommands(AsyncPlayerChatEvent event) {
-        if (event.getMessage() != null && event.getMessage().startsWith("wu::")) {
+    public void actionCommands(final AsyncPlayerChatEvent event) {
+        event.getMessage();
+        if (event.getMessage().startsWith("wu::")) {
             UUID uuid;
             try {
                 uuid = UUID.fromString(event.getMessage().substring("wu::".length()));
             } catch (IllegalArgumentException expected) {
                 return;
             }
-            PlayerAction action = clickDataMap.get(uuid);
-            Player player = event.getPlayer();
+            final PlayerAction action = clickDataMap.get(uuid);
+            final Player player = event.getPlayer();
             event.setMessage("");
             event.setCancelled(true);
             if (action != null) {
@@ -305,66 +311,70 @@ public class API implements Listener {
                     }
                 }
             } else {
-                sendDebugMessage(player.getName() + "&c tried to use a invalid action!");
+                this.sendDebugMessage(player.getName() + "&c tried to use a invalid action!");
             }
         }
     }
 
     private KitPvP plugin;
     private ConfigAPI configAPI;
-    private InventoryAPI inventoryAPI;
+    private InventoryAPI<CustomCache> inventoryAPI;
     private LanguageAPI languageAPI;
 
     @EventHandler
     public void actionRemoval(PlayerQuitEvent event) {
-        clickDataMap.keySet().removeIf(uuid -> clickDataMap.get(uuid).getUuid().equals(event.getPlayer().getUniqueId()));
+        this.clickDataMap.keySet().removeIf(uuid -> this.clickDataMap.get(uuid).getUuid().equals(event.getPlayer().getUniqueId()));
     }
 
     @Inject
-    public API(KitPvP plugin) {
+    public API(final KitPvP plugin) {
         this.plugin = plugin;
         this.inventoryAPI = new InventoryAPI<>(this.plugin, this, CustomCache.class);
     }
 
+    private KitPvP getPlugin() {
+        return this.plugin;
+    }
+
     public LanguageAPI getLanguageAPI() {
         if (!hasLanguageAPI()) {
-            languageAPI = new LanguageAPI(this.plugin);
+            this.languageAPI = new LanguageAPI(this.plugin);
         }
 
-        return languageAPI;
+        return this.languageAPI;
     }
 
     public boolean isLanguageEnabled() {
-        return languageAPI != null;
+        return this.languageAPI != null;
     }
 
     public ConfigAPI getConfigAPI() {
         if (!this.hasConfigAPI()) {
-            configAPI = new ConfigAPI(this);
+            this.configAPI = new ConfigAPI(this);
         }
-        return configAPI;
+        return this.configAPI;
     }
 
     public boolean isConfigEnabled() {
-        return languageAPI != null;
+        return this.languageAPI != null;
     }
 
-    public InventoryAPI getInventoryAPI(){
-        return getInventoryAPI(inventoryAPI.craftCustomCache().getClass());
+    public InventoryAPI<CustomCache> getInventoryAPI(){
+        return this.getInventoryAPI((Class<CustomCache>) this.inventoryAPI.craftCustomCache().getClass());
     }
 
     public <T extends CustomCache> InventoryAPI<T> getInventoryAPI(final Class<T> type) {
         if (this.hasInventoryAPI() && type.isInstance(inventoryAPI.craftCustomCache())) {
-            return (InventoryAPI<T>) inventoryAPI;
+            return (InventoryAPI<T>) this.inventoryAPI;
         } else if(!this.hasInventoryAPI()) {
-            this.inventoryAPI = new InventoryAPI<>(plugin, this, type);
-            return this.inventoryAPI;
+            this.inventoryAPI = new InventoryAPI<CustomCache>(plugin, this, (Class<CustomCache>) type);
+            return (InventoryAPI<T>) this.inventoryAPI;
         }
         throw new InvalidCacheTypeException("Cache type "+type.getName()+" expected, got "+inventoryAPI.craftCustomCache().getClass().getName()+"!");
     }
 
     public <T extends CustomCache> void setInventoryAPI(InventoryAPI<T> inventoryAPI){
-        this.inventoryAPI = inventoryAPI;
+        this.inventoryAPI = (InventoryAPI<CustomCache>) inventoryAPI;
     }
 
     public boolean hasInventoryAPI() {
@@ -386,37 +396,37 @@ public class API implements Listener {
         return false;
     }
 
-    public void sendPlayerMessage(Player player, String message) {
+    public void sendPlayerMessage(final Player player, String message) {
         if (player != null) {
             message = CHAT_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-            message = API.translateColorCodes(message);
+            message = this.translateColorCodes(message);
             player.sendMessage(message);
         }
     }
 
-    public void sendPlayerMessage(Player player, String guiCluster, String msgKey) {
-        sendPlayerMessage(player, "$inventories." + guiCluster + ".global_messages." + msgKey + "$");
+    public void sendPlayerMessage(final Player player, final String guiCluster, final String msgKey) {
+        this.sendPlayerMessage(player, "$inventories." + guiCluster + ".global_messages." + msgKey + "$");
     }
 
-    public void sendPlayerMessage(Player player, String guiCluster, String guiWindow, String msgKey) {
-        sendPlayerMessage(player, "$inventories."+guiCluster+"."+guiWindow+".messages."+msgKey+"$");
+    public void sendPlayerMessage(final Player player, final String guiCluster, final String guiWindow, final String msgKey) {
+        this.sendPlayerMessage(player, "$inventories."+guiCluster+"."+guiWindow+".messages."+msgKey+"$");
     }
 
-    public void sendPlayerMessage(Player player, String guiCluster, String msgKey, String[]... replacements) {
-        String message = "$inventories."+guiCluster+".global_messages."+msgKey+"$";
-        sendPlayerMessage(player, message, replacements);
+    public void sendPlayerMessage(final Player player, final String guiCluster, final String msgKey, final String[]... replacements) {
+        final String message = "$inventories."+guiCluster+".global_messages."+msgKey+"$";
+        this.sendPlayerMessage(player, message, replacements);
     }
 
-    public void sendPlayerMessage(Player player, String guiCluster, String guiWindow, String msgKey, String[]... replacements) {
-        String message = "$inventories."+guiCluster+"."+guiWindow+".messages."+msgKey+"$";
-        sendPlayerMessage(player, message, replacements);
+    public void sendPlayerMessage(final Player player, final String guiCluster, final String guiWindow, final String msgKey, final String[]... replacements) {
+        final String message = "$inventories."+guiCluster+"."+guiWindow+".messages."+msgKey+"$";
+        this.sendPlayerMessage(player, message, replacements);
     }
 
-    public void sendPlayerMessage(Player player, String message, String[]... replacements) {
+    public void sendPlayerMessage(final Player player, String message, final String[]... replacements) {
         if (replacements != null) {
             if (player != null) {
                 message = CHAT_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
-                for (String[] replace : replacements) {
+                for (final String[] replace : replacements) {
                     if (replace.length > 1) {
                         message = message.replaceAll(replace[0], replace[1]);
                     }
@@ -425,51 +435,53 @@ public class API implements Listener {
                 return;
             }
         }
-        player.sendMessage(API.translateColorCodes(message));
+        player.sendMessage(this.translateColorCodes(message));
     }
 
-    public void sendActionMessage(Player player, ClickData... clickData) {
-        TextComponent[] textComponents = getActionMessage(CHAT_PREFIX, player, clickData);
+    public void sendActionMessage(final Player player, final ClickData... clickData) {
+        final TextComponent[] textComponents = getActionMessage(CHAT_PREFIX, player, clickData);
         player.spigot().sendMessage(textComponents);
     }
 
-    public void openBook(Player player, String author, String title, boolean editable, ClickData[]... clickDatas) {
-        ItemStack itemStack = new ItemStack(editable ? Material.BOOK : Material.WRITTEN_BOOK);
-        BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
+    public void openBook(final Player player, final String author, final String title, final boolean editable, final ClickData[]... clickData) {
+        final ItemStack itemStack = new ItemStack(editable ? Material.BOOK : Material.WRITTEN_BOOK);
+        final BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
         bookMeta.setAuthor(author);
         bookMeta.setTitle(title);
-        for (ClickData[] clickData : clickDatas) {
-            TextComponent[] textComponents = getActionMessage("", player, clickData);
+        for (final ClickData[] data : clickData) {
+            final TextComponent[] textComponents = getActionMessage("", player, data);
             bookMeta.spigot().addPage(textComponents);
         }
         itemStack.setItemMeta(bookMeta);
         player.openBook(itemStack);
     }
 
-    public void openBook(Player player, boolean editable, ClickData[]... clickDatas) {
-        openBook(player, "WolfyUtilities", "Blank", editable, clickDatas);
+    public void openBook(final Player player, final boolean editable, final ClickData[]... clickData) {
+        this.openBook(player, "5exyGuy", "Blank", editable, clickData);
     }
 
-    public TextComponent[] getActionMessage(String prefix, Player player, ClickData... clickData) {
-        TextComponent[] textComponents = new TextComponent[clickData.length + 1];
+    public TextComponent[] getActionMessage(final String prefix, final Player player, final ClickData... clickData) {
+        final TextComponent[] textComponents = new TextComponent[clickData.length + 1];
         textComponents[0] = new TextComponent(prefix);
         for (int i = 1; i < textComponents.length; i++) {
-            ClickData data = clickData[i - 1];
+            final ClickData data = clickData[i - 1];
             TextComponent component = new TextComponent(getLanguageAPI().replaceColoredKeys(data.getMessage()));
             if (data.getClickAction() != null) {
                 UUID id = UUID.randomUUID();
-                while (clickDataMap.containsKey(id)) {
+                while (this.clickDataMap.containsKey(id)) {
                     id = UUID.randomUUID();
                 }
-                PlayerAction playerAction = new PlayerAction(this, player, data);
-                clickDataMap.put(id, playerAction);
+                final PlayerAction playerAction = new PlayerAction(this, player, data);
+                this.clickDataMap.put(id, playerAction);
                 component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "wu::" + id.toString()));
             }
-            for (ChatEvent chatEvent : data.getChatEvents()) {
+            for (final ChatEvent<? extends Object, ? extends Object> chatEvent : data.getChatEvents()) {
                 if (chatEvent instanceof HoverEvent) {
-                    component.setHoverEvent(new net.md_5.bungee.api.chat.HoverEvent(((HoverEvent) chatEvent).getAction(), ((HoverEvent) chatEvent).getValue()));
-                } else if (chatEvent instanceof me.wolfyscript.utilities.api.utils.chat.ClickEvent) {
-                    component.setClickEvent(new ClickEvent(((me.wolfyscript.utilities.api.utils.chat.ClickEvent) chatEvent).getAction(), ((me.wolfyscript.utilities.api.utils.chat.ClickEvent) chatEvent).getValue()));
+                    component.setHoverEvent(new net.md_5.bungee.api.chat.HoverEvent(((HoverEvent) chatEvent).getAction(),
+                            ((HoverEvent) chatEvent).getValue()));
+                } else if (chatEvent instanceof com.escapeg.kitpvp.api.utils.chat.ClickEvent) {
+                    component.setClickEvent(new ClickEvent(((com.escapeg.kitpvp.api.utils.chat.ClickEvent) chatEvent).getAction(),
+                            ((com.escapeg.kitpvp.api.utils.chat.ClickEvent) chatEvent).getValue()));
                 }
             }
             textComponents[i] = component;
@@ -477,15 +489,13 @@ public class API implements Listener {
         return textComponents;
     }
 
-
-
     public void sendDebugMessage(String message) {
         if (hasDebuggingMode()) {
-            String prefix = ChatColor.translateAlternateColorCodes('&', "[&4CC&r] ");
+            final String prefix = ChatColor.translateAlternateColorCodes('&', "[&4CC&r] ");
             message = ChatColor.translateAlternateColorCodes('&', message);
-            List<String> messages = new ArrayList<>();
+            final List<String> messages = new ArrayList<>();
             if (message.length() > 70) {
-                int count = message.length() / 70;
+                final int count = message.length() / 70;
                 for (int text = 0; text <= count; text++) {
                     if (text < count) {
                         messages.add(message.substring(text * 70, 70 + 70 * text));
@@ -493,15 +503,14 @@ public class API implements Listener {
                         messages.add(message.substring(text * 70));
                     }
                 }
-                for (String result : messages) {
-                    Main.getInstance().getServer().getConsoleSender().sendMessage(prefix + result);
+                for (final String result : messages) {
+                    this.getPlugin().getServer().getConsoleSender().sendMessage(prefix + result);
                 }
             } else {
                 message = prefix + message;
-                Main.getInstance().getServer().getConsoleSender().sendMessage(message);
+                this.getPlugin().getServer().getConsoleSender().sendMessage(message);
             }
         }
     }
-
 
 }

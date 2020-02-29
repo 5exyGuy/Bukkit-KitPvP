@@ -6,42 +6,42 @@ import java.util.ArrayList;
 
 public class LanguageAPI {
 
-    private KitPvP plugin;
-    private ArrayList<Language> languages;
+    private final KitPvP plugin;
+    private final ArrayList<Language> languages;
     private Language activeLanguage;
 
-    public LanguageAPI(KitPvP plugin) {
+    public LanguageAPI(final KitPvP plugin) {
         this.plugin = plugin;
         this.languages = new ArrayList<>();
         this.activeLanguage = null;
     }
 
     public void unregisterLanguages() {
-        languages.clear();
+        this.languages.clear();
     }
 
-    public void registerLanguage(Language language) {
-        if (languages.isEmpty()) {
+    public void registerLanguage(final Language language) {
+        if (this.languages.isEmpty()) {
             setActiveLanguage(language);
         }
-        if (!languages.contains(language)) {
-            languages.add(language);
+        if (!this.languages.contains(language)) {
+            this.languages.add(language);
         }
     }
 
-    public void setActiveLanguage(Language language) {
-        activeLanguage = language;
+    public void setActiveLanguage(final Language language) {
+        this.activeLanguage = language;
     }
 
     public Language getActiveLanguage() {
-        return activeLanguage;
+        return this.activeLanguage;
     }
 
-    public String replaceKeys(String msg) {
+    public String replaceKeys(final String msg) {
         return getActiveLanguage().replaceKeys(msg);
     }
 
-    public String replaceColoredKeys(String msg){
+    public String replaceColoredKeys(final String msg){
         return getActiveLanguage().replaceColoredKeys(msg);
     }
 
