@@ -1,5 +1,9 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.button.Button;
+import com.escapeg.kitpvp.api.inventory.cache.CustomCache;
+import com.escapeg.kitpvp.api.inventory.events.GuiCloseEvent;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.button.Button;
 import me.wolfyscript.utilities.api.inventory.cache.CustomCache;
@@ -19,7 +23,7 @@ import java.util.*;
 
 public class GuiHandler<T extends CustomCache> implements Listener {
 
-    private WolfyUtilities api;
+    private API api;
     private InventoryAPI invAPI;
     private Player player;
     private boolean changingInv = false;
@@ -32,7 +36,7 @@ public class GuiHandler<T extends CustomCache> implements Listener {
 
     private T customCache;
 
-    public GuiHandler(Player player, WolfyUtilities api, T customCache) {
+    public GuiHandler(Player player, API api, T customCache) {
         this.api = api;
         this.invAPI = api.getInventoryAPI();
         this.player = player;
@@ -44,7 +48,7 @@ public class GuiHandler<T extends CustomCache> implements Listener {
         return changingInv;
     }
 
-    public WolfyUtilities getApi() {
+    public API getAPI() {
         return api;
     }
 
@@ -162,11 +166,11 @@ public class GuiHandler<T extends CustomCache> implements Listener {
     Opens the specific GuiWindow in the specific GuiCluster.
      */
     public void changeToInv(@Nonnull String clusterID, @Nonnull String guiWindowID) {
-        Bukkit.getScheduler().runTask(getApi().getPlugin(), () -> {
+        Bukkit.getScheduler().runTask(getAPI().getPlugin(), () -> {
             Player player1 = getPlayer();
             changingInv = true;
             player1.closeInventory();
-            if (WolfyUtilities.hasPermission(player1, getApi().getPlugin().getDescription().getName().toLowerCase(Locale.ROOT) + ".inv." + clusterID.toLowerCase(Locale.ROOT) + "." + guiWindowID.toLowerCase(Locale.ROOT))) {
+            if (API.hasPermission(player1, getAPI().getPlugin().getDescription().getName().toLowerCase(Locale.ROOT) + ".inv." + clusterID.toLowerCase(Locale.ROOT) + "." + guiWindowID.toLowerCase(Locale.ROOT))) {
                 List<String> history = clusterHistory.getOrDefault(clusterID, new ArrayList<>());
                 if (getCurrentInv(clusterID) == null || !getCurrentInv(clusterID).getNamespace().equals(guiWindowID)) {
                     history.add(guiWindowID);

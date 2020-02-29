@@ -1,9 +1,6 @@
 package com.escapeg.kitpvp.api.config;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.main.Main;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +15,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class YamlConfiguration extends me.wolfyscript.utilities.api.config.FileConfiguration {
+public class YamlConfiguration extends com.escapeg.kitpvp.api.config.FileConfiguration {
 
     private org.bukkit.configuration.file.YamlConfiguration config;
     private int intervalsToPass = 0;
@@ -359,7 +356,7 @@ public class YamlConfiguration extends me.wolfyscript.utilities.api.config.FileC
                     if (replaceKeys && api.getLanguageAPI().getActiveLanguage() != null) {
                         displayName = api.getLanguageAPI().getActiveLanguage().replaceKeys(displayName);
                     }
-                    itemMeta.setDisplayName(WolfyUtilities.translateColorCodes(displayName));
+                    itemMeta.setDisplayName(API.translateColorCodes(displayName));
                 }
                 if (itemMeta.hasLore()) {
                     List<String> newLore = new ArrayList<>();
@@ -376,7 +373,7 @@ public class YamlConfiguration extends me.wolfyscript.utilities.api.config.FileC
                                 continue;
                             }
                         }
-                        newLore.add(WolfyUtilities.translateColorCodes(row));
+                        newLore.add(API.translateColorCodes(row));
                     }
                     itemMeta.setLore(newLore);
                 }

@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.inventory.events;
+package com.escapeg.kitpvp.api.inventory.events;
 
 import javax.annotation.Nonnull;
 import me.wolfyscript.utilities.api.inventory.GuiHandler;

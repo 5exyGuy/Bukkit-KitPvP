@@ -1,5 +1,7 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.button.Button;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.button.Button;
 import me.wolfyscript.utilities.api.utils.chat.ClickData;
@@ -51,8 +53,8 @@ public class GuiWindow implements Listener {
         return inventoryType;
     }
 
-    public WolfyUtilities getAPI() {
-        return inventoryAPI.getWolfyUtilities();
+    public API getAPI() {
+        return inventoryAPI.getAPI();
     }
 
     public int getSize() {
@@ -175,11 +177,11 @@ public class GuiWindow implements Listener {
     }
 
     public void sendMessage(Player player, String msgKey, String[]... replacements){
-        inventoryAPI.getWolfyUtilities().sendPlayerMessage(player, getClusterID(), getNamespace(), msgKey, replacements);
+        inventoryAPI.getAPI().sendPlayerMessage(player, getClusterID(), getNamespace(), msgKey, replacements);
     }
 
     protected String getInventoryName() {
-        return WolfyUtilities.translateColorCodes(inventoryAPI.getWolfyUtilities().getLanguageAPI().getActiveLanguage().replaceKeys("$inventories."+ clusterID + "." + namespace + ".gui_name$"));
+        return API.translateColorCodes(inventoryAPI.getAPI().getLanguageAPI().getActiveLanguage().replaceKeys("$inventories."+ clusterID + "." + namespace + ".gui_name$"));
     }
 
     public void setClusterID(String clusterID){
@@ -206,10 +208,10 @@ public class GuiWindow implements Listener {
         return clusterID + ":" + namespace;
     }
 
-    public List<String> getHelpInformation(){
+    public List<String> getHelpInformation() {
         List<String> values = new ArrayList<>();
         for(String value : getAPI().getLanguageAPI().getActiveLanguage().replaceKey("$inventories."+ clusterID + "." + namespace + ".gui_help$")){
-            values.add(WolfyUtilities.translateColorCodes(value));
+            values.add(API.translateColorCodes(value));
         }
         return values;
     }

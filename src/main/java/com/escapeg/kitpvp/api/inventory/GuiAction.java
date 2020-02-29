@@ -1,6 +1,6 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.api.API;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -14,7 +14,7 @@ public class GuiAction {
     private String action;
     private GuiHandler guiHandler;
     private Player player;
-    private WolfyUtilities wolfyUtilities;
+    private API api;
     private GuiWindow guiWindow;
     private int clickedSlot;
     private ClickType clickType;
@@ -30,7 +30,7 @@ public class GuiAction {
         this.action = action;
         this.guiHandler = guiHandler;
         this.player = guiHandler.getPlayer();
-        this.wolfyUtilities = guiHandler.getApi();
+        this.api = guiHandler.getAPI();
         this.guiWindow = guiWindow;
         this.clickedSlot = event.getSlot();
         this.clickType = event.getClick();
@@ -87,8 +87,8 @@ public class GuiAction {
         return player;
     }
 
-    public WolfyUtilities getWolfyUtilities() {
-        return wolfyUtilities;
+    public API getAPI() {
+        return api;
     }
 
     public String getAction() {

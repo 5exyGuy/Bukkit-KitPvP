@@ -1,10 +1,11 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.button.Button;
-import me.wolfyscript.utilities.api.inventory.button.buttons.ItemInputButton;
-import me.wolfyscript.utilities.api.inventory.cache.CustomCache;
-import me.wolfyscript.utilities.api.utils.InventoryUtils;
+import com.escapeg.kitpvp.KitPvP;
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.button.Button;
+import com.escapeg.kitpvp.api.inventory.button.buttons.ItemInputButton;
+import com.escapeg.kitpvp.api.inventory.cache.CustomCache;
+import com.escapeg.kitpvp.api.utils.InventoryUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,15 +25,15 @@ import java.util.Map;
 
 public class InventoryAPI<T extends CustomCache> implements Listener {
 
-    private Plugin plugin;
-    private WolfyUtilities wolfyUtilities;
+    private KitPvP plugin;
+    private API api;
     private HashMap<String, GuiHandler> guiHandlers = new HashMap<>();
     private HashMap<String, GuiCluster> guiClusters = new HashMap<>();
 
     private Class<T> customCacheClass;
 
-    public InventoryAPI(Plugin plugin, WolfyUtilities wolfyUtilities, Class<T> customCacheClass) {
-        this.wolfyUtilities = wolfyUtilities;
+    public InventoryAPI(KitPvP plugin, API api, Class<T> customCacheClass) {
+        this.api = api;
         this.plugin = plugin;
         this.customCacheClass = customCacheClass;
         try {
@@ -87,8 +88,8 @@ public class InventoryAPI<T extends CustomCache> implements Listener {
         return getGuiCluster("none").getGuiWindow(guiWindowID);
     }
 
-    public WolfyUtilities getWolfyUtilities() {
-        return wolfyUtilities;
+    public API getAPI() {
+        return this.api;
     }
 
     public void setMainmenu(String guiWindowID) {
@@ -123,7 +124,7 @@ public class InventoryAPI<T extends CustomCache> implements Listener {
     }
 
     private void createGuiHandler(Player player) {
-        GuiHandler<T> guiHandler = new GuiHandler<>(player, wolfyUtilities, craftCustomCache());
+        GuiHandler<T> guiHandler = new GuiHandler<>(player, this.api, craftCustomCache());
         setPlayerGuiStudio(player, guiHandler);
     }
 
@@ -172,7 +173,7 @@ public class InventoryAPI<T extends CustomCache> implements Listener {
     Registers an Button globally which then can be accessed in every GUI.
      */
     public void registerButton(String clusterID, Button button) {
-        getGuiCluster(clusterID).registerButton(button, getWolfyUtilities());
+        getGuiCluster(clusterID).registerButton(button, getAPI());
     }
 
     /*

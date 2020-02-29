@@ -1,22 +1,14 @@
 package com.escapeg.kitpvp.api;
 
 import com.escapeg.kitpvp.KitPvP;
+import com.escapeg.kitpvp.api.config.ConfigAPI;
+import com.escapeg.kitpvp.api.utils.chat.PlayerAction;
 import com.google.inject.Inject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.base64.Base64;
-import me.wolfyscript.utilities.api.config.ConfigAPI;
-import me.wolfyscript.utilities.api.custom_items.CustomItems;
-import me.wolfyscript.utilities.api.inventory.InventoryAPI;
-import me.wolfyscript.utilities.api.inventory.cache.CustomCache;
-import me.wolfyscript.utilities.api.language.LanguageAPI;
-import me.wolfyscript.utilities.api.utils.chat.ChatEvent;
-import me.wolfyscript.utilities.api.utils.chat.ClickData;
-import me.wolfyscript.utilities.api.utils.chat.HoverEvent;
-import me.wolfyscript.utilities.api.utils.chat.PlayerAction;
-import me.wolfyscript.utilities.api.utils.exceptions.InvalidCacheTypeException;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;

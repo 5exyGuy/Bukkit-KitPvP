@@ -1,8 +1,7 @@
 package com.escapeg.kitpvp.api.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.escapeg.kitpvp.KitPvP;
+import com.escapeg.kitpvp.api.API;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -13,21 +12,21 @@ import java.util.HashMap;
 
 public class ConfigAPI {
 
-    private Plugin plugin;
-    private WolfyUtilities api;
+    private KitPvP plugin;
+    private API api;
     private boolean prettyPrinting = false;
 
     private HashMap<String, Configuration> configs;
 
     private int autoSave = -1;
 
-    public ConfigAPI(WolfyUtilities api) {
+    public ConfigAPI(API api) {
         this.api = api;
         this.plugin = api.getPlugin();
         this.configs = new HashMap<>();
     }
 
-    public ConfigAPI(WolfyUtilities api, boolean enableAutoSave, int intervalInMin) {
+    public ConfigAPI(API api, boolean enableAutoSave, int intervalInMin) {
         this(api);
         setAutoSave(enableAutoSave, intervalInMin);
     }
@@ -115,7 +114,7 @@ public class ConfigAPI {
         return plugin;
     }
 
-    public WolfyUtilities getApi() {
+    public API getAPI() {
         return api;
     }
 

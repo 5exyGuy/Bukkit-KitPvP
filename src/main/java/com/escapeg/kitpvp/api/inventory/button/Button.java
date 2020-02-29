@@ -1,5 +1,8 @@
-package me.wolfyscript.utilities.api.inventory.button;
+package com.escapeg.kitpvp.api.inventory.button;
 
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.GuiHandler;
+import com.escapeg.kitpvp.api.inventory.GuiWindow;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.*;
 import me.wolfyscript.utilities.api.inventory.GuiWindow;
@@ -29,7 +32,7 @@ public abstract class Button {
 
     public abstract void init(GuiWindow guiWindow);
 
-    public abstract void init(String clusterID, WolfyUtilities api);
+    public abstract void init(String clusterID, API api);
 
     public abstract boolean execute(GuiHandler guiHandler, Player player, Inventory inventory, int slot, InventoryClickEvent event);
 
@@ -47,7 +50,7 @@ public abstract class Button {
         ItemStack item = state.getIcon(help);
         HashMap<String, Object> values = new HashMap<>();
         values.put("%wolfyutilities.help%", guiHandler.getCurrentInv().getHelpInformation());
-        values.put("%plugin.version%", guiHandler.getApi().getPlugin().getDescription().getVersion());
+        values.put("%plugin.version%", guiHandler.getAPI().getPlugin().getDescription().getVersion());
         if(state.getAction() instanceof ButtonActionRender){
             item = ((ButtonActionRender) state.getAction()).render(values, guiHandler, player, item, slot, help);
         }else if(state.getRenderAction() != null){
@@ -69,23 +72,23 @@ public abstract class Button {
                             for (int i = 0; i < lore.size(); i++) {
                                 if(lore.get(i).contains(entry.getKey())){
                                     if(list.size() > 0){
-                                        lore.set(i, lore.get(i).replace(entry.getKey(), WolfyUtilities.translateColorCodes(String.valueOf(list.get(list.size()-1)))));
+                                        lore.set(i, lore.get(i).replace(entry.getKey(), API.translateColorCodes(String.valueOf(list.get(list.size()-1)))));
                                     }else{
                                         lore.set(i, "");
                                     }
                                     if(list.size() > 1){
                                         for(int j = list.size()-2; j >= 0; j--){
-                                            lore.add(i, WolfyUtilities.translateColorCodes(String.valueOf(list.get(j))));
+                                            lore.add(i, API.translateColorCodes(String.valueOf(list.get(j))));
                                         }
                                     }
                                 }
                             }
                         }
                     }else if (entry.getValue() != null){
-                        name = name.replace(entry.getKey(), WolfyUtilities.translateColorCodes(String.valueOf(entry.getValue())));
+                        name = name.replace(entry.getKey(), API.translateColorCodes(String.valueOf(entry.getValue())));
                         if (meta.hasLore()) {
                             for (int i = 0; i < lore.size(); i++) {
-                                lore.set(i, lore.get(i).replace(entry.getKey(), WolfyUtilities.translateColorCodes(String.valueOf(entry.getValue()))));
+                                lore.set(i, lore.get(i).replace(entry.getKey(), API.translateColorCodes(String.valueOf(entry.getValue()))));
                             }
                         }
                     }

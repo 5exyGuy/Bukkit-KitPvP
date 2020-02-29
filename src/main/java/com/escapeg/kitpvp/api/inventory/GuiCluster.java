@@ -1,7 +1,7 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.button.Button;
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.button.Button;
 
 import java.util.HashMap;
 
@@ -27,7 +27,7 @@ public class GuiCluster {
         return mainmenu;
     }
 
-    public void registerButton(Button button, WolfyUtilities api){
+    public void registerButton(Button button, API api){
         button.init(id, api);
         buttons.putIfAbsent(button.getId(), button);
     }

@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.inventory.button;
+package com.escapeg.kitpvp.api.inventory.button;
 
 public enum ButtonType {
 

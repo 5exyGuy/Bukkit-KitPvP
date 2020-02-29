@@ -1,8 +1,7 @@
-package me.wolfyscript.utilities.api.inventory.button;
+package com.escapeg.kitpvp.api.inventory.button;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.GuiWindow;
-import me.wolfyscript.utilities.api.utils.ItemUtils;
+import com.escapeg.kitpvp.api.inventory.GuiWindow;
+import com.escapeg.kitpvp.api.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

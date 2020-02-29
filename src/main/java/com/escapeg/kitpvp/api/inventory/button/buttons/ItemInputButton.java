@@ -1,10 +1,9 @@
-package me.wolfyscript.utilities.api.inventory.button.buttons;
+package com.escapeg.kitpvp.api.inventory.button.buttons;
 
-import me.wolfyscript.utilities.api.inventory.GuiHandler;
-import me.wolfyscript.utilities.api.inventory.button.ButtonActionRender;
-import me.wolfyscript.utilities.api.inventory.button.ButtonState;
-import me.wolfyscript.utilities.api.inventory.button.ButtonType;
-import me.wolfyscript.utilities.main.Main;
+import com.escapeg.kitpvp.api.inventory.GuiHandler;
+import com.escapeg.kitpvp.api.inventory.button.ButtonActionRender;
+import com.escapeg.kitpvp.api.inventory.button.ButtonState;
+import com.escapeg.kitpvp.api.inventory.button.ButtonType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

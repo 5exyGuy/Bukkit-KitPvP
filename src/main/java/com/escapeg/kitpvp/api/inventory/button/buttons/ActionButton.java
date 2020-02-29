@@ -1,20 +1,14 @@
-package me.wolfyscript.utilities.api.inventory.button.buttons;
+package com.escapeg.kitpvp.api.inventory.button.buttons;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.GuiHandler;
-import me.wolfyscript.utilities.api.inventory.GuiWindow;
-import me.wolfyscript.utilities.api.inventory.button.Button;
-import me.wolfyscript.utilities.api.inventory.button.ButtonActionRender;
-import me.wolfyscript.utilities.api.inventory.button.ButtonState;
-import me.wolfyscript.utilities.api.inventory.button.ButtonType;
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.GuiHandler;
+import com.escapeg.kitpvp.api.inventory.GuiWindow;
+import com.escapeg.kitpvp.api.inventory.button.Button;
+import com.escapeg.kitpvp.api.inventory.button.ButtonState;
+import com.escapeg.kitpvp.api.inventory.button.ButtonType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ActionButton extends Button {
 
@@ -38,7 +32,7 @@ public class ActionButton extends Button {
     }
 
     @Override
-    public void init(String windowKey, WolfyUtilities api) {
+    public void init(String windowKey, API api) {
         state.init(windowKey, api);
     }
 

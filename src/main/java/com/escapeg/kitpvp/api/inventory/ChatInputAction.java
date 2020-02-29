@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
 import org.bukkit.entity.Player;
 

@@ -1,8 +1,8 @@
 package com.escapeg.kitpvp.api.language;
 
 import com.escapeg.kitpvp.api.API;
-import me.wolfyscript.utilities.api.config.ConfigAPI;
-import me.wolfyscript.utilities.api.config.MemoryConfiguration;
+import com.escapeg.kitpvp.api.config.ConfigAPI;
+import com.escapeg.kitpvp.api.config.MemoryConfiguration;
 
 import java.util.*;
 import java.util.regex.Matcher;

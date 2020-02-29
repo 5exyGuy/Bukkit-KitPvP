@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.inventory.cache;
+package com.escapeg.kitpvp.api.inventory.cache;
 
 import me.wolfyscript.utilities.api.inventory.GuiWindow;
 

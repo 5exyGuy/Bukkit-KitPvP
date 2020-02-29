@@ -1,6 +1,9 @@
-package me.wolfyscript.utilities.api.inventory;
+package com.escapeg.kitpvp.api.inventory;
 
 import javax.annotation.Nonnull;
+
+import com.escapeg.kitpvp.api.API;
+import com.escapeg.kitpvp.api.inventory.button.Button;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.button.Button;
 import org.bukkit.Bukkit;
@@ -18,7 +21,7 @@ public class GuiUpdateEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private GuiHandler guiHandler;
     private InventoryAPI inventoryAPI;
-    private WolfyUtilities wolfyUtilities;
+    private API api;
     private Player player;
     private Inventory inventory;
     private GuiWindow guiWindow;
@@ -26,12 +29,12 @@ public class GuiUpdateEvent extends Event {
     public GuiUpdateEvent(GuiHandler guiHandler, GuiWindow guiWindow) {
         this.guiHandler = guiHandler;
         this.inventoryAPI = guiHandler.getApi().getInventoryAPI();
-        this.wolfyUtilities = guiHandler.getApi();
+        this.api = guiHandler.getAPI();
         this.player = guiHandler.getPlayer();
         this.guiWindow = guiWindow;
         if (!guiWindow.hasCachedInventory(guiHandler)) {
             String guiName = guiWindow.getInventoryName();
-            guiName = guiName.replace("%plugin.version%",wolfyUtilities.getPlugin().getDescription().getVersion()).replace("%plugin.author%",wolfyUtilities.getPlugin().getDescription().getAuthors().toString()).replace("%plugin.name%",wolfyUtilities.getPlugin().getDescription().getName());
+            guiName = guiName.replace("%plugin.version%",api.getPlugin().getDescription().getVersion()).replace("%plugin.author%",wolfyUtilities.getPlugin().getDescription().getAuthors().toString()).replace("%plugin.name%",wolfyUtilities.getPlugin().getDescription().getName());
             if (guiWindow.getInventoryType() == null) {
                 this.inventory = Bukkit.createInventory(null, guiWindow.getSize(), guiName);
             } else {
@@ -54,8 +57,8 @@ public class GuiUpdateEvent extends Event {
         return player;
     }
 
-    public WolfyUtilities getWolfyUtilities() {
-        return wolfyUtilities;
+    public API getAPI() {
+        return api;
     }
 
     public GuiWindow getGuiWindow() {

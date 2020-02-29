@@ -1,6 +1,6 @@
-package me.wolfyscript.utilities.api.inventory.button;
+package com.escapeg.kitpvp.api.inventory.button;
 
-import me.wolfyscript.utilities.api.inventory.GuiHandler;
+import com.escapeg.kitpvp.api.inventory.GuiHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
