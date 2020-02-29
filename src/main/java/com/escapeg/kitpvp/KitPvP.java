@@ -21,6 +21,8 @@ import java.util.UUID;
 
 public final class KitPvP extends JavaPlugin {
 
+    // TODO: https://github.com/WolfyScript/WolfyUtilities
+
     // Utilities
     @Inject private Config config;
     @Inject private MySQL mysql;

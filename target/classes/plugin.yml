@@ -1,0 +1,5 @@
+name: KitPvP
+version: 1.0-SNAPSHOT
+main: com.escapeg.kitpvp.KitPvP
+api-version: '1.15'
+authors: [5exyGuy]

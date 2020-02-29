@@ -1,0 +1,14 @@
+# Spawn Location
+spawn:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+# MySQL Connection
+mysql:
+  host: 'localhost'
+  username: 'iamagod'
+  password: 'JEDmnlL2uKs9VI93'
+  database: 'kitpvp'
+  port: '3306'
+  SSL: false
+
