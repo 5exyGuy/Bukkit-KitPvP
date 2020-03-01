@@ -9,8 +9,8 @@ import java.util.List;
 
 public class InventoryUtils {
 
-    public static boolean isEmpty(List<ItemStack> list) {
-        for (ItemStack itemStack : list) {
+    public static boolean isEmpty(final List<ItemStack> list) {
+        for (final ItemStack itemStack : list) {
             if (!itemStack.getType().equals(Material.AIR)) {
                 return false;
             }
@@ -18,13 +18,13 @@ public class InventoryUtils {
         return true;
     }
 
-    public static int getInventorySpace(Player p, ItemStack item) {
-        return getInventorySpace(p.getInventory(), item);
+    public static int getInventorySpace(final Player p, final ItemStack item) {
+        return InventoryUtils.getInventorySpace(p.getInventory(), item);
     }
 
-    public static int getInventorySpace(Inventory inventory, ItemStack item) {
+    public static int getInventorySpace(final Inventory inventory, final ItemStack item) {
         int free = 0;
-        for (ItemStack i : inventory.getStorageContents()) {
+        for (final ItemStack i : inventory.getStorageContents()) {
             if (i == null || i.getType().equals(Material.AIR)) {
                 free += item.getMaxStackSize();
             } else if (i.isSimilar(item)) {
@@ -34,17 +34,17 @@ public class InventoryUtils {
         return free;
     }
 
-    public static boolean hasInventorySpace(Inventory inventory, ItemStack itemStack) {
-        return getInventorySpace(inventory, itemStack) >= itemStack.getAmount();
+    public static boolean hasInventorySpace(final Inventory inventory, final ItemStack itemStack) {
+        return InventoryUtils.getInventorySpace(inventory, itemStack) >= itemStack.getAmount();
     }
 
-    public static boolean hasInventorySpace(Player p, ItemStack item) {
-        return getInventorySpace(p, item) >= item.getAmount();
+    public static boolean hasInventorySpace(final Player p, final ItemStack item) {
+        return InventoryUtils.getInventorySpace(p, item) >= item.getAmount();
     }
 
-    public static boolean hasEmptySpaces(Player p, int count) {
+    public static boolean hasEmptySpaces(final Player p, final int count) {
         int empty = 0;
-        for (ItemStack i : p.getInventory()) {
+        for (final ItemStack i : p.getInventory()) {
             if (i == null) {
                 empty++;
             }
@@ -52,9 +52,9 @@ public class InventoryUtils {
         return empty >= count;
     }
 
-    public static int firstSimilar(Inventory inventory, ItemStack itemStack){
+    public static int firstSimilar(final Inventory inventory, final ItemStack itemStack){
         for(int i = 0; i < inventory.getSize(); i++){
-            ItemStack slotItem = inventory.getItem(i);
+            final ItemStack slotItem = inventory.getItem(i);
             if(slotItem == null){
                 return i;
             }

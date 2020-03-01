@@ -12,6 +12,7 @@ import com.escapeg.kitpvp.tasks.KeepDayTask;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.escapeg.kitpvp.extenders.PlayerExtended;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Map;
@@ -20,6 +21,11 @@ import java.util.UUID;
 public final class KitPvP extends JavaPlugin {
 
     // TODO: https://github.com/WolfyScript/WolfyUtilities
+    private static KitPvP plugin;
+
+    public static KitPvP getInstance() {
+        return KitPvP.plugin;
+    }
 
     // Utilities
     @Inject private API api;
@@ -38,6 +44,7 @@ public final class KitPvP extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        KitPvP.plugin = this;
         final PluginBinderModule module = new PluginBinderModule(this);
         final Injector injector = module.createInjector();
         injector.injectMembers(this);

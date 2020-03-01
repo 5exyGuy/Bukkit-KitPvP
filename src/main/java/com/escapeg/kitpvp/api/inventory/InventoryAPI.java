@@ -92,7 +92,7 @@ public class InventoryAPI<T extends CustomCache> implements Listener {
         return this.api;
     }
 
-    public void setMainmenu(String guiWindowID) {
+    public void setMainMenu(String guiWindowID) {
         getGuiCluster("none").setMainmenu(guiWindowID);
     }
 
@@ -189,7 +189,7 @@ public class InventoryAPI<T extends CustomCache> implements Listener {
     public void onInvClick(InventoryClickEvent event) {
         if (event.getClickedInventory() != null) {
             if (hasGuiHandler((Player) event.getWhoClicked())) {
-                GuiHandler guiHandler = getGuiHandler((Player) event.getWhoClicked());
+                GuiHandler<T> guiHandler = getGuiHandler((Player) event.getWhoClicked());
                 if (guiHandler.verifyInventory(event.getView().getTopInventory())) {
                     GuiWindow guiWindow = guiHandler.getCurrentInv();
                     if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {

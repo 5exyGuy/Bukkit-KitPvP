@@ -36,6 +36,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class API implements Listener {
 
@@ -81,6 +83,7 @@ public class API implements Listener {
                 e.printStackTrace();
             }
             try {
+                assert profileField != null;
                 profileField.set(skullMeta, profile);
                 itemStack.setItemMeta(skullMeta);
             } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -317,6 +320,9 @@ public class API implements Listener {
     }
 
     private KitPvP plugin;
+    private String consolePrefix;
+    private String chatPrefix;
+    private String databasePrefix;
     private ConfigAPI configAPI;
     private InventoryAPI<CustomCache> inventoryAPI;
     private LanguageAPI languageAPI;
@@ -332,6 +338,30 @@ public class API implements Listener {
         this.inventoryAPI = new InventoryAPI<>(this.plugin, this, CustomCache.class);
     }
 
+    public void setConsolePrefix(String consolePrefix) {
+        this.consolePrefix = consolePrefix;
+    }
+
+    public void setChatPrefix(String chatPrefix) {
+        this.chatPrefix = chatPrefix;
+    }
+
+    public void setDatabasePrefix(String databasePrefix) {
+        this.databasePrefix = databasePrefix;
+    }
+
+    public String getChatPrefix() {
+        return this.chatPrefix;
+    }
+
+    public String getConsolePrefix() {
+        return this.consolePrefix;
+    }
+
+    public String getDatabasePrefix() {
+        return this.databasePrefix;
+    }
+
     private KitPvP getPlugin() {
         return this.plugin;
     }
@@ -344,10 +374,6 @@ public class API implements Listener {
         return this.languageAPI;
     }
 
-    public boolean isLanguageEnabled() {
-        return this.languageAPI != null;
-    }
-
     public ConfigAPI getConfigAPI() {
         if (!this.hasConfigAPI()) {
             this.configAPI = new ConfigAPI(this);
@@ -355,26 +381,23 @@ public class API implements Listener {
         return this.configAPI;
     }
 
-    public boolean isConfigEnabled() {
-        return this.languageAPI != null;
-    }
-
+    @SuppressWarnings("unchecked")
     public InventoryAPI<CustomCache> getInventoryAPI(){
         return this.getInventoryAPI((Class<CustomCache>) this.inventoryAPI.craftCustomCache().getClass());
     }
 
-    public <T extends CustomCache> InventoryAPI<T> getInventoryAPI(final Class<T> type) {
+    public InventoryAPI<CustomCache> getInventoryAPI(final Class<CustomCache> type) {
         if (this.hasInventoryAPI() && type.isInstance(inventoryAPI.craftCustomCache())) {
-            return (InventoryAPI<T>) this.inventoryAPI;
+            return this.inventoryAPI;
         } else if(!this.hasInventoryAPI()) {
-            this.inventoryAPI = new InventoryAPI<CustomCache>(plugin, this, (Class<CustomCache>) type);
-            return (InventoryAPI<T>) this.inventoryAPI;
+            this.inventoryAPI = new InventoryAPI<>(plugin, this, type);
+            return this.inventoryAPI;
         }
         throw new InvalidCacheTypeException("Cache type "+type.getName()+" expected, got "+inventoryAPI.craftCustomCache().getClass().getName()+"!");
     }
 
-    public <T extends CustomCache> void setInventoryAPI(InventoryAPI<T> inventoryAPI){
-        this.inventoryAPI = (InventoryAPI<CustomCache>) inventoryAPI;
+    public void setInventoryAPI(InventoryAPI<CustomCache> inventoryAPI){
+        this.inventoryAPI = inventoryAPI;
     }
 
     public boolean hasInventoryAPI() {
@@ -396,9 +419,47 @@ public class API implements Listener {
         return false;
     }
 
+    public void sendConsoleMessage(String message) {
+        message = consolePrefix + getLanguageAPI().getActiveLanguage().replaceKeys(message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        this.plugin.getServer().getConsoleSender().sendMessage(message);
+    }
+
+    public void sendConsoleWarning(String message) {
+        message = consolePrefix + "[WARN] " + getLanguageAPI().getActiveLanguage().replaceKeys(message);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        this.plugin.getServer().getConsoleSender().sendMessage(message);
+    }
+
+    public void sendConsoleMessage(String message, final String... replacements) {
+        message = consolePrefix + getLanguageAPI().getActiveLanguage().replaceKeys(message);
+        final List<String> keys = new ArrayList<>();
+        final Pattern pattern = Pattern.compile("%([A-Z]*?)(_*?)%");
+        final Matcher matcher = pattern.matcher(message);
+        while (matcher.find()) {
+            keys.add(matcher.group(0));
+        }
+        for (int i = 0; i < keys.size(); i++) {
+            message = message.replace(keys.get(i), replacements[i]);
+        }
+        this.plugin.getServer().getConsoleSender().sendMessage(this.translateColorCodes(message));
+    }
+
+    public void sendConsoleMessage(String message, final String[]... replacements) {
+        if (replacements != null) {
+            message = chatPrefix + getLanguageAPI().getActiveLanguage().replaceKeys(message);
+            for (final String[] replace : replacements) {
+                if (replace.length > 1) {
+                    message = message.replaceAll(replace[0], replace[1]);
+                }
+            }
+        }
+        this.plugin.getServer().getConsoleSender().sendMessage(this.translateColorCodes(message));
+    }
+
     public void sendPlayerMessage(final Player player, String message) {
         if (player != null) {
-            message = CHAT_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
+            message = chatPrefix + getLanguageAPI().getActiveLanguage().replaceKeys(message);
             message = this.translateColorCodes(message);
             player.sendMessage(message);
         }
@@ -425,7 +486,7 @@ public class API implements Listener {
     public void sendPlayerMessage(final Player player, String message, final String[]... replacements) {
         if (replacements != null) {
             if (player != null) {
-                message = CHAT_PREFIX + getLanguageAPI().getActiveLanguage().replaceKeys(message);
+                message = chatPrefix + getLanguageAPI().getActiveLanguage().replaceKeys(message);
                 for (final String[] replace : replacements) {
                     if (replace.length > 1) {
                         message = message.replaceAll(replace[0], replace[1]);
@@ -439,7 +500,7 @@ public class API implements Listener {
     }
 
     public void sendActionMessage(final Player player, final ClickData... clickData) {
-        final TextComponent[] textComponents = getActionMessage(CHAT_PREFIX, player, clickData);
+        final TextComponent[] textComponents = getActionMessage(chatPrefix, player, clickData);
         player.spigot().sendMessage(textComponents);
     }
 
@@ -460,6 +521,7 @@ public class API implements Listener {
         this.openBook(player, "5exyGuy", "Blank", editable, clickData);
     }
 
+    @SuppressWarnings("unchecked")
     public TextComponent[] getActionMessage(final String prefix, final Player player, final ClickData... clickData) {
         final TextComponent[] textComponents = new TextComponent[clickData.length + 1];
         textComponents[0] = new TextComponent(prefix);

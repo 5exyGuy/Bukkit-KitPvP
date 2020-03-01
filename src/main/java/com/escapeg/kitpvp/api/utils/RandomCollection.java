@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.utils;
+package com.escapeg.kitpvp.api.utils;
 
 import java.util.NavigableMap;
 import java.util.Random;

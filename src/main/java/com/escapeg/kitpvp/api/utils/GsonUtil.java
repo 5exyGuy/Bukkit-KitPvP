@@ -12,14 +12,14 @@ public final class GsonUtil {
     private static final GsonBuilder gsonBuilder = new GsonBuilder().disableHtmlEscaping().serializeNulls().serializeSpecialFloatingPointValues().disableInnerClassSerialization();
 
     public static GsonBuilder getGsonBuilder() {
-        return gsonBuilder;
+        return GsonUtil.gsonBuilder;
     }
 
     public static Gson getGson() {
-        return gsonBuilder.create();
+        return GsonUtil.gsonBuilder.create();
     }
 
-    public static Gson getGson(boolean prettyPrinting){
+    public static Gson getGson(final boolean prettyPrinting){
         Gson resultGson;
         if (prettyPrinting) {
             GsonUtil.getGsonBuilder().setPrettyPrinting();
@@ -28,7 +28,7 @@ public final class GsonUtil {
                 Field pretty = GsonUtil.getGsonBuilder().getClass().getDeclaredField("prettyPrinting");
                 pretty.setAccessible(true);
                 pretty.setBoolean(GsonUtil.getGsonBuilder(), false);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (final NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         } else {
@@ -37,15 +37,15 @@ public final class GsonUtil {
         return resultGson;
     }
 
-    public static void registerTypeHierarchyAdapter(Class<?> baseType, Object typeAdapter){
-        gsonBuilder.registerTypeHierarchyAdapter(baseType, typeAdapter);
+    public static void registerTypeHierarchyAdapter(final Class<?> baseType, final Object typeAdapter){
+        GsonUtil.gsonBuilder.registerTypeHierarchyAdapter(baseType, typeAdapter);
     }
 
-    public static void registerTypeAdapter(Type type, Object typeAdapter){
-        gsonBuilder.registerTypeAdapter(type, typeAdapter);
+    public static void registerTypeAdapter(final Type type, final Object typeAdapter){
+        GsonUtil.gsonBuilder.registerTypeAdapter(type, typeAdapter);
     }
 
-    public static void registerTypeHierarchyAdapter(TypeAdapterFactory factory){
-        gsonBuilder.registerTypeAdapterFactory(factory);
+    public static void registerTypeHierarchyAdapter(final TypeAdapterFactory factory){
+        GsonUtil.gsonBuilder.registerTypeAdapterFactory(factory);
     }
 }

@@ -1,5 +1,6 @@
 package com.escapeg.kitpvp.api.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
@@ -36,7 +37,7 @@ public class Reflection {
     private static Map<Class<?>, Map<Class, Field>> foundFields = new HashMap<>();
 
     public static String getVersion() {
-        return Main.getInstance().getServer().getClass().getPackage().getName().substring(23);
+        return Bukkit.getServer().getClass().getPackage().getName().substring(23);
     }
 
     /**

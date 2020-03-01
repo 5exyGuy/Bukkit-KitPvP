@@ -1,6 +1,7 @@
 package com.escapeg.kitpvp.api.utils;
 
-import me.wolfyscript.utilities.api.custom_items.equipment.ArmorType;
+import com.escapeg.kitpvp.KitPvP;
+import com.escapeg.kitpvp.api.custom_items.equipment.ArmorType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -32,15 +33,15 @@ public class ItemUtils {
      * @param itemStack the item to convert
      * @return the Json string representation of the item
      */
-    public static String convertItemStackToJson(ItemStack itemStack) {
+    public static String convertItemStackToJson(final ItemStack itemStack) {
         // ItemStack methods to get a net.minecraft.server.ItemStack object for serialization
-        Class<?> craftItemStackClazz = Reflection.getOBC("inventory.CraftItemStack");
-        Method asNMSCopyMethod = Reflection.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
+        final Class<?> craftItemStackClazz = Reflection.getOBC("inventory.CraftItemStack");
+        final Method asNMSCopyMethod = Reflection.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
 
         // NMS Method to serialize a net.minecraft.server.ItemStack to a valid Json string
-        Class<?> nmsItemStackClazz = Reflection.getNMS("ItemStack");
-        Class<?> nbtTagCompoundClazz = Reflection.getNMS("NBTTagCompound");
-        Method saveNmsItemStackMethod = Reflection.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
+        final Class<?> nmsItemStackClazz = Reflection.getNMS("ItemStack");
+        final Class<?> nbtTagCompoundClazz = Reflection.getNMS("NBTTagCompound");
+        final Method saveNmsItemStackMethod = Reflection.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
 
         Object nmsNbtTagCompoundObj; // This will just be an empty NBTTagCompound instance to invoke the saveNms method
         Object nmsItemStackObj; // This is the net.minecraft.server.ItemStack object received from the asNMSCopy method
@@ -48,13 +49,15 @@ public class ItemUtils {
 
         try {
             nmsNbtTagCompoundObj = nbtTagCompoundClazz.newInstance();
+            assert asNMSCopyMethod != null;
             nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
+            assert saveNmsItemStackMethod != null;
             itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
-        } catch (Throwable t) {
-            Main.getMainUtil().sendConsoleMessage("failed to serialize itemstack to nms item");
-            Main.getMainUtil().sendConsoleMessage(t.toString());
-            for (StackTraceElement element : t.getStackTrace()) {
-                Main.getMainUtil().sendConsoleMessage(element.toString());
+        } catch (final Throwable t) {
+            KitPvP.getInstance().getAPI().sendConsoleMessage("Failed to serialize itemstack to nms item");
+            KitPvP.getInstance().getAPI().sendConsoleMessage(t.toString());
+            for (final StackTraceElement element : t.getStackTrace()) {
+                KitPvP.getInstance().getAPI().sendConsoleMessage(element.toString());
             }
             return null;
         }
@@ -68,23 +71,26 @@ public class ItemUtils {
      * @param json the json to convert
      * @return the ItemStack representation of the Json String
      */
-    public static ItemStack convertJsontoItemStack(String json) {
-        Class<?> craftItemStackClazz = Reflection.getOBC("inventory.CraftItemStack");
-        Class<?> nmsItemStackClazz = Reflection.getNMS("ItemStack");
-        Class<?> nbtTagCompoundClazz = Reflection.getNMS("NBTTagCompound");
-        Class<?> mojangParser = Reflection.getNMS("MojangsonParser");
+    public static ItemStack convertJsonToItemStack(final String json) {
+        final Class<?> craftItemStackClazz = Reflection.getOBC("inventory.CraftItemStack");
+        final Class<?> nmsItemStackClazz = Reflection.getNMS("ItemStack");
+        final Class<?> nbtTagCompoundClazz = Reflection.getNMS("NBTTagCompound");
+        final Class<?> mojangParser = Reflection.getNMS("MojangsonParser");
 
-        Method parseMethod = Reflection.getMethod(mojangParser, "parse", String.class);
-        Method aMethod = Reflection.getMethod(nmsItemStackClazz, "a", nbtTagCompoundClazz);
-        Method asBukkitCopyMethod = Reflection.getMethod(craftItemStackClazz, "asBukkitCopy", nmsItemStackClazz);
+        final Method parseMethod = Reflection.getMethod(mojangParser, "parse", String.class);
+        final Method aMethod = Reflection.getMethod(nmsItemStackClazz, "a", nbtTagCompoundClazz);
+        final Method asBukkitCopyMethod = Reflection.getMethod(craftItemStackClazz, "asBukkitCopy", nmsItemStackClazz);
 
         Object nmsNbtTagCompoundObj;
         Object nmsItemStackObj;
         try {
+            assert parseMethod != null;
             nmsNbtTagCompoundObj = parseMethod.invoke(null, json);
+            assert aMethod != null;
             nmsItemStackObj = aMethod.invoke(null, nmsNbtTagCompoundObj);
+            assert asBukkitCopyMethod != null;
             return (ItemStack) asBukkitCopyMethod.invoke(null, nmsItemStackObj);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (final IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;
@@ -94,18 +100,19 @@ public class ItemUtils {
     /*
     Prepare and configure the ItemStack for the GUI!
      */
-    public static ItemStack[] createItem(ItemStack itemStack, String displayName, String[] helpLore, String... normalLore) {
-        ItemStack[] itemStacks = new ItemStack[2];
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        List<String> lore = new ArrayList<>();
+    public static ItemStack[] createItem(final ItemStack itemStack, final String displayName, final String[] helpLore, final String... normalLore) {
+        final ItemStack[] itemStacks = new ItemStack[2];
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        final List<String> lore = new ArrayList<>();
         if(itemMeta != null){
             if(displayName != null && !displayName.isEmpty()){
-                itemMeta.setDisplayName(WolfyUtilities.translateColorCodes(displayName));
+                itemMeta.setDisplayName(KitPvP.getInstance().getAPI().translateColorCodes(displayName));
             }
             if (normalLore != null && normalLore.length > 0) {
-                for (String row : normalLore) {
+                for (final String row : normalLore) {
                     if (!row.isEmpty()) {
-                        lore.add(row.equalsIgnoreCase("<empty>") ? "" : org.bukkit.ChatColor.translateAlternateColorCodes('&', row));
+                        lore.add(row.equalsIgnoreCase("<empty>") ? "" :
+                                org.bukkit.ChatColor.translateAlternateColorCodes('&', row));
                     }
                 }
             }
@@ -119,11 +126,11 @@ public class ItemUtils {
             itemStack.setItemMeta(itemMeta);
         }
         itemStacks[0] = itemStack;
-        ItemStack helpItem = new ItemStack(itemStack);
-        ItemMeta helpMeta = helpItem.getItemMeta();
+        final ItemStack helpItem = new ItemStack(itemStack);
+        final ItemMeta helpMeta = helpItem.getItemMeta();
         if(helpMeta != null){
             if (helpLore != null && helpLore.length > 0) {
-                for (String row : helpLore) {
+                for (final String row : helpLore) {
                     if (!row.isEmpty()) {
                         lore.add(row.equalsIgnoreCase("<empty>") ? "" : ChatColor.translateAlternateColorCodes('&', row));
                     }
@@ -141,81 +148,81 @@ public class ItemUtils {
     The data maybe can't be saved and loaded correctly!
      */
     @Deprecated
-    public static String serializeItemStack(ItemStack is) {
+    public static String serializeItemStack(final ItemStack is) {
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            BukkitObjectOutputStream bukkitOutputStream = new BukkitObjectOutputStream(outputStream);
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            final BukkitObjectOutputStream bukkitOutputStream = new BukkitObjectOutputStream(outputStream);
             bukkitOutputStream.writeObject(is);
             bukkitOutputStream.flush();
             return Base64.getEncoder().encodeToString(outputStream.toByteArray());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Unable to serialize ItemStack!", e);
         }
     }
 
-    public static ItemStack deserializeItemStack(String data) {
-        return deserializeItemStack(Base64.getDecoder().decode(data));
+    public static ItemStack deserializeItemStack(final String data) {
+        return ItemUtils.deserializeItemStack(Base64.getDecoder().decode(data));
     }
 
-    public static ItemStack deserializeItemStack(byte[] bytes) {
+    public static ItemStack deserializeItemStack(final byte[] bytes) {
         try {
             try {
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-                BukkitObjectInputStream bukkitInputStream = new BukkitObjectInputStream(inputStream);
-                Object itemStack = bukkitInputStream.readObject();
+                final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+                final BukkitObjectInputStream bukkitInputStream = new BukkitObjectInputStream(inputStream);
+                final Object itemStack = bukkitInputStream.readObject();
                 if (itemStack instanceof ItemStack) {
                     return (ItemStack) itemStack;
                 }
-            } catch (StreamCorruptedException ex) {
-                return deserializeNMSItemStack(bytes);
+            } catch (final StreamCorruptedException ex) {
+                return ItemUtils.deserializeNMSItemStack(bytes);
             }
             return null;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (final IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static String serializeNMSItemStack(ItemStack itemStack) {
+    public static String serializeNMSItemStack(final ItemStack itemStack) {
         if (itemStack == null) return "null";
         ByteArrayOutputStream outputStream = null;
         try {
-            Class<?> nbtTagCompoundClass = Reflection.getNMS("NBTTagCompound");
-            Constructor<?> nbtTagCompoundConstructor = nbtTagCompoundClass.getConstructor();
-            Object nbtTagCompound = nbtTagCompoundConstructor.newInstance();
-            Object nmsItemStack = Reflection.getOBC("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class).invoke(null, itemStack);
+            final Class<?> nbtTagCompoundClass = Reflection.getNMS("NBTTagCompound");
+            final Constructor<?> nbtTagCompoundConstructor = nbtTagCompoundClass.getConstructor();
+            final Object nbtTagCompound = nbtTagCompoundConstructor.newInstance();
+            final Object nmsItemStack = Reflection.getOBC("inventory.CraftItemStack").getMethod("asNMSCopy", ItemStack.class).invoke(null, itemStack);
             Reflection.getNMS("ItemStack").getMethod("save", nbtTagCompoundClass).invoke(nmsItemStack, nbtTagCompound);
             outputStream = new ByteArrayOutputStream();
             Reflection.getNMS("NBTCompressedStreamTools").getMethod("a", nbtTagCompoundClass, OutputStream.class).invoke(null, nbtTagCompound, outputStream);
-        } catch (SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (final SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
+        assert outputStream != null;
         return Base64.getEncoder().encodeToString(outputStream.toByteArray());
     }
 
-    public static ItemStack deserializeNMSItemStack(String data) {
-        return deserializeNMSItemStack(Base64.getDecoder().decode(data));
+    public static ItemStack deserializeNMSItemStack(final String data) {
+        return ItemUtils.deserializeNMSItemStack(Base64.getDecoder().decode(data));
     }
 
-    public static ItemStack deserializeNMSItemStack(byte[] bytes) {
+    public static ItemStack deserializeNMSItemStack(final byte[] bytes) {
         if (bytes == null) return null;
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        Class<?> nbtTagCompoundClass = Reflection.getNMS("NBTTagCompound");
-        Class<?> nmsItemStackClass = Reflection.getNMS("ItemStack");
-        Object nbtTagCompound;
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        final Class<?> nbtTagCompoundClass = Reflection.getNMS("NBTTagCompound");
+        final Class<?> nmsItemStackClass = Reflection.getNMS("ItemStack");
+        Object[] nbtTagCompound;
         ItemStack itemStack = null;
         try {
-            nbtTagCompound = Reflection.getNMS("NBTCompressedStreamTools").getMethod("a", InputStream.class).invoke(null, inputStream);
-            Object craftItemStack = nmsItemStackClass.getMethod("a", nbtTagCompoundClass).invoke(nmsItemStackClass, nbtTagCompound);
+            nbtTagCompound = (Object[]) Reflection.getNMS("NBTCompressedStreamTools").getMethod("a", InputStream.class).invoke(null, inputStream);
+            final Object craftItemStack = nmsItemStackClass.getMethod("a", nbtTagCompoundClass).invoke(nmsItemStackClass, nbtTagCompound);
             itemStack = (ItemStack) Reflection.getOBC("inventory.CraftItemStack").getMethod("asBukkitCopy", nmsItemStackClass).invoke(null, craftItemStack);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
         }
         return itemStack;
     }
 
-    //SOME ITEMMETA UTILS
-    public static ItemMeta toggleItemFlag(ItemMeta itemMeta, ItemFlag itemFlag){
+    public static ItemMeta toggleItemFlag(final ItemMeta itemMeta, final ItemFlag itemFlag){
         if (!itemMeta.hasItemFlag(itemFlag)) {
             itemMeta.addItemFlags(itemFlag);
         } else {
@@ -224,7 +231,7 @@ public class ItemUtils {
         return itemMeta;
     }
 
-    public static ItemMeta setEnchantEffect(ItemMeta itemMeta, boolean hide){
+    public static ItemMeta setEnchantEffect(final ItemMeta itemMeta, final boolean hide){
         if(!itemMeta.hasEnchants()){
             itemMeta.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 0, true);
             if(hide){
@@ -239,20 +246,23 @@ public class ItemUtils {
     Deprecated, because 1.14 has an better alternative! It can be accessed via ItemMeta.getPersistentDataContainer()!
     Alternative can be found in the CustomItem class!
      */
+    @SuppressWarnings("unchecked")
     @Deprecated
-    public static ItemMeta setToItemSettings(ItemMeta itemMeta, String key, Object value) {
-        JSONObject obj = getItemSettings(itemMeta);
-        List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
+    public static ItemMeta setToItemSettings(final ItemMeta itemMeta, final String key, final java.lang.constant.Constable value) {
+        JSONObject obj = ItemUtils.getItemSettings(itemMeta);
+        final List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
         if (obj == null) {
             obj = new JSONObject(new HashMap<String, Object>());
             obj.put(key, value);
-            lore.add(WolfyUtilities.hideString("itemSettings" + obj.toString()));
+            assert lore != null;
+            lore.add(KitPvP.getInstance().getAPI().hideString("itemSettings" + obj.toString()));
         } else {
             obj.put(key, value);
+            assert lore != null;
             for (int i = 0; i < lore.size(); i++) {
-                String line = WolfyUtilities.unhideString(lore.get(i));
+                final String line = KitPvP.getInstance().getAPI().unhideString(lore.get(i));
                 if (line.startsWith("itemSettings")) {
-                    lore.set(i, WolfyUtilities.hideString("itemSettings" + obj.toString()));
+                    lore.set(i, KitPvP.getInstance().getAPI().hideString("itemSettings" + obj.toString()));
                 }
             }
         }
@@ -261,23 +271,24 @@ public class ItemUtils {
     }
 
     @Deprecated
-    public static ItemStack setToItemSettings(ItemStack itemStack, String key, Object value) {
+    public static ItemStack setToItemSettings(final ItemStack itemStack, final String key, final java.lang.constant.Constable value) {
         itemStack.setItemMeta(setToItemSettings(itemStack.getItemMeta(), key, value));
         return itemStack;
     }
 
-    public static void removeItemSettings(ItemStack itemStack){
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        removeItemSettings(itemMeta);
+    public static void removeItemSettings(final ItemStack itemStack){
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemUtils.removeItemSettings(itemMeta);
         itemStack.setItemMeta(itemMeta);
     }
 
-    public static void removeItemSettings(ItemMeta itemMeta){
+    public static void removeItemSettings(final ItemMeta itemMeta){
         if (itemMeta != null && itemMeta.hasLore()) {
-            List<String> lore = itemMeta.getLore();
-            Iterator<String> iterator = lore.iterator();
+            final List<String> lore = itemMeta.getLore();
+            assert lore != null;
+            final Iterator<String> iterator = lore.iterator();
             while (iterator.hasNext()){
-                String cleared = WolfyUtilities.unhideString(iterator.next());
+                final String cleared = KitPvP.getInstance().getAPI().unhideString(iterator.next());
                 if (cleared.startsWith("itemSettings")) {
                     iterator.remove();
                 }
@@ -288,57 +299,57 @@ public class ItemUtils {
 
     @Deprecated
     @Nullable
-    public static Object getFromItemSettings(ItemMeta itemMeta, String key) {
-        if (hasItemSettings(itemMeta)) {
-            return getItemSettings(itemMeta).get(key);
+    public static Object getFromItemSettings(final ItemMeta itemMeta, final String key) {
+        if (ItemUtils.hasItemSettings(itemMeta)) {
+            return Objects.requireNonNull(getItemSettings(itemMeta)).get(key);
         }
         return null;
     }
 
     @Deprecated
-    public static Object getFromItemSettings(ItemStack itemStack, String key) {
-        return getFromItemSettings(itemStack.getItemMeta(), key);
+    public static Object getFromItemSettings(final ItemStack itemStack, final String key) {
+        return ItemUtils.getFromItemSettings(itemStack.getItemMeta(), key);
     }
 
     @Deprecated
-    public static boolean isInItemSettings(ItemStack itemStack, String key) {
-        return getFromItemSettings(itemStack, key) != null;
+    public static boolean isInItemSettings(final ItemStack itemStack, final String key) {
+        return ItemUtils.getFromItemSettings(itemStack, key) != null;
     }
 
     @Deprecated
-    public static boolean isInItemSettings(ItemMeta itemMeta, String key) {
-        return getFromItemSettings(itemMeta, key) != null;
+    public static boolean isInItemSettings(final ItemMeta itemMeta, final String key) {
+        return ItemUtils.getFromItemSettings(itemMeta, key) != null;
     }
 
     @Deprecated
-    public static boolean hasItemSettings(@Nonnull ItemStack itemStack) {
-        return getItemSettings(itemStack.getItemMeta()) != null;
+    public static boolean hasItemSettings(@Nonnull final ItemStack itemStack) {
+        return ItemUtils.getItemSettings(itemStack.getItemMeta()) != null;
     }
 
     @Deprecated
-    public static boolean hasItemSettings(@Nullable ItemMeta itemMeta) {
-        return getItemSettings(itemMeta) != null;
+    public static boolean hasItemSettings(@Nullable final ItemMeta itemMeta) {
+        return ItemUtils.getItemSettings(itemMeta) != null;
     }
 
     @Deprecated
-    public static JSONObject getItemSettings(@Nonnull ItemStack itemStack) {
-        return getItemSettings(itemStack.getItemMeta());
+    public static JSONObject getItemSettings(@Nonnull final ItemStack itemStack) {
+        return ItemUtils.getItemSettings(itemStack.getItemMeta());
     }
 
     @Deprecated
     @Nullable
-    public static JSONObject getItemSettings(@Nullable ItemMeta itemMeta) {
+    public static JSONObject getItemSettings(@Nullable final ItemMeta itemMeta) {
         if (itemMeta != null && itemMeta.hasLore()) {
-            List<String> lore = itemMeta.getLore();
-            for (String line : lore) {
-                String cleared = WolfyUtilities.unhideString(line);
+            final List<String> lore = itemMeta.getLore();
+            assert lore != null;
+            for (final String line : lore) {
+                final String cleared = KitPvP.getInstance().getAPI().unhideString(line);
                 if (cleared.startsWith("itemSettings")) {
                     try {
-                        JSONObject obj = (JSONObject) new JSONParser().parse(cleared.replace("itemSettings", ""));
-                        return obj;
-                    } catch (ParseException e) {
-                        Main.getMainUtil().sendConsoleWarning("Error getting JSONObject from String:");
-                        Main.getMainUtil().sendConsoleWarning("" + cleared);
+                        return (JSONObject) new JSONParser().parse(cleared.replace("itemSettings", ""));
+                    } catch (final ParseException e) {
+                        KitPvP.getInstance().getAPI().sendConsoleWarning("Error getting JSONObject from String:");
+                        KitPvP.getInstance().getAPI().sendConsoleWarning(cleared);
                         return null;
                     }
                 }
@@ -354,13 +365,14 @@ public class ItemUtils {
     //itemSettings{"damage":<damage>,"durability":<total_durability>,"durability_tag":""}
 
     @Deprecated
-    public static boolean hasCustomDurability(@Nonnull ItemStack itemStack) {
-        return hasCustomDurability(itemStack.getItemMeta());
+    public static boolean hasCustomDurability(@Nonnull final ItemStack itemStack) {
+        return ItemUtils.hasCustomDurability(itemStack.getItemMeta());
     }
 
+    @SuppressWarnings("unchecked")
     @Deprecated
     public static boolean hasCustomDurability(@Nullable ItemMeta itemMeta) {
-        JSONObject obj = getItemSettings(itemMeta);
+        final JSONObject obj = getItemSettings(itemMeta);
         if (obj != null) {
             return ((Set<String>) obj.keySet()).contains("durability");
         }
@@ -372,128 +384,134 @@ public class ItemUtils {
     Returns the ItemStack with the new lore.
      */
     @Deprecated
-    public static void setCustomDurability(ItemStack itemStack, int durability) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        setCustomDurability(itemMeta, durability);
+    public static void setCustomDurability(final ItemStack itemStack, final int durability) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemUtils.setCustomDurability(itemMeta, durability);
         itemStack.setItemMeta(itemMeta);
     }
 
     @Deprecated
-    public static void setCustomDurability(ItemMeta itemMeta, int durability) {
-        setToItemSettings(itemMeta, "durability", durability);
-        setDurabilityTag(itemMeta);
+    public static void setCustomDurability(final ItemMeta itemMeta, final int durability) {
+        ItemUtils.setToItemSettings(itemMeta, "durability", durability);
+        ItemUtils.setDurabilityTag(itemMeta);
     }
 
     @Deprecated
-    public static int getCustomDurability(ItemStack itemStack) {
-        return getCustomDurability(itemStack.getItemMeta());
+    public static int getCustomDurability(final ItemStack itemStack) {
+        return ItemUtils.getCustomDurability(itemStack.getItemMeta());
     }
 
     @Deprecated
-    public static int getCustomDurability(ItemMeta itemMeta) {
-        if (getFromItemSettings(itemMeta, "durability") != null) {
+    public static int getCustomDurability(final ItemMeta itemMeta) {
+        if (ItemUtils.getFromItemSettings(itemMeta, "durability") != null) {
             return NumberConversions.toInt(getFromItemSettings(itemMeta, "durability"));
         }
         return 0;
     }
 
     @Deprecated
-    public static void setDamage(ItemStack itemStack, int damage) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
+    public static void setDamage(final ItemStack itemStack, final int damage) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta instanceof Damageable) {
             ((Damageable) itemMeta).setDamage((int) (itemStack.getType().getMaxDurability() * ((double) damage / (double) getCustomDurability(itemStack))));
         }
-        setDamage(itemMeta, damage);
+        ItemUtils.setDamage(itemMeta, damage);
         itemStack.setItemMeta(itemMeta);
     }
 
     @Deprecated
-    public static void setDamage(ItemMeta itemMeta, int damage) {
-        setToItemSettings(itemMeta, "damage", damage);
-        setDurabilityTag(itemMeta);
+    public static void setDamage(final ItemMeta itemMeta, final int damage) {
+        ItemUtils.setToItemSettings(itemMeta, "damage", damage);
+        ItemUtils.setDurabilityTag(itemMeta);
     }
 
     @Deprecated
-    public static int getDamage(ItemStack itemStack) {
-        return getDamage(itemStack.getItemMeta());
+    public static int getDamage(final ItemStack itemStack) {
+        return ItemUtils.getDamage(itemStack.getItemMeta());
     }
 
     @Deprecated
-    public static int getDamage(ItemMeta itemMeta) {
+    public static int getDamage(final ItemMeta itemMeta) {
         if (getFromItemSettings(itemMeta, "damage") != null) {
-            int damage = NumberConversions.toInt(getFromItemSettings(itemMeta, "damage"));
-            return damage;
+            return NumberConversions.toInt(getFromItemSettings(itemMeta, "damage"));
         }
         return 0;
     }
 
     @Deprecated
-    public static void setDurabilityTag(ItemStack itemStack) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        setDurabilityTag(itemMeta);
+    public static void setDurabilityTag(final ItemStack itemStack) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemUtils.setDurabilityTag(itemMeta);
         itemStack.setItemMeta(itemMeta);
     }
 
     @Deprecated
-    public static void setDurabilityTag(ItemMeta itemMeta) {
-        if (!getDurabilityTag(itemMeta).isEmpty() && !getDurabilityTag(itemMeta).equals("")) {
-            List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
+    public static void setDurabilityTag(final ItemMeta itemMeta) {
+        if (!ItemUtils.getDurabilityTag(itemMeta).isEmpty() && !ItemUtils.getDurabilityTag(itemMeta).equals("")) {
+            final List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
             for (int i = 0; i < lore.size(); i++) {
-                String line = WolfyUtilities.unhideString(lore.get(i));
+                final String line = KitPvP.getInstance().getAPI().unhideString(lore.get(i));
                 if (line.startsWith("durability_tag")) {
                     lore.remove(i);
+                    break;
                 }
             }
-            lore.add(lore.size() > 0 ? lore.size() - 1 : 0, WolfyUtilities.hideString("durability_tag") + WolfyUtilities.translateColorCodes(getDurabilityTag(itemMeta).replace("%DUR%", String.valueOf(getCustomDurability(itemMeta) - getDamage(itemMeta))).replace("%MAX_DUR%", String.valueOf(getCustomDurability(itemMeta)))));
+            lore.add(lore.size() > 0 ? lore.size() - 1 : 0,KitPvP.getInstance().getAPI().hideString("durability_tag") +
+                    KitPvP.getInstance().getAPI().translateColorCodes(getDurabilityTag(itemMeta)
+                            .replace("%DUR%", String.valueOf(getCustomDurability(itemMeta) - getDamage(itemMeta)))
+                            .replace("%MAX_DUR%", String.valueOf(getCustomDurability(itemMeta)))));
             itemMeta.setLore(lore);
         }
     }
 
-    public static void removeDurabilityTag(ItemStack itemStack){
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        removeDurabilityTag(itemMeta);
+    public static void removeDurabilityTag(final ItemStack itemStack){
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemUtils.removeDurabilityTag(itemMeta);
         itemStack.setItemMeta(itemMeta);
     }
 
-    public static void removeDurabilityTag(ItemMeta itemMeta){
-        List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
+    public static void removeDurabilityTag(final ItemMeta itemMeta){
+        final List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
         for (int i = 0; i < lore.size(); i++) {
-            String line = WolfyUtilities.unhideString(lore.get(i));
+            final String line = KitPvP.getInstance().getAPI().unhideString(lore.get(i));
             if (line.startsWith("durability_tag")) {
                 lore.remove(i);
+                break;
             }
         }
         itemMeta.setLore(lore);
     }
 
     @Deprecated
-    public static void setDurabilityTag(ItemMeta itemMeta, String value) {
-        setToItemSettings(itemMeta, "durability_tag", value);
-        setDurabilityTag(itemMeta);
+    public static void setDurabilityTag(final ItemMeta itemMeta, final String value) {
+        ItemUtils.setToItemSettings(itemMeta, "durability_tag", value);
+        ItemUtils.setDurabilityTag(itemMeta);
     }
 
     @Deprecated
-    public static void setDurabilityTag(ItemStack itemStack, String value) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        setDurabilityTag(itemMeta, value);
+    public static void setDurabilityTag(final ItemStack itemStack, final String value) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        ItemUtils.setDurabilityTag(itemMeta, value);
         itemStack.setItemMeta(itemMeta);
     }
 
     @Deprecated
-    public static String getDurabilityTag(ItemStack itemStack) {
-        return getDurabilityTag(itemStack.getItemMeta());
+    public static String getDurabilityTag(final ItemStack itemStack) {
+        return ItemUtils.getDurabilityTag(itemStack.getItemMeta());
     }
 
     @Deprecated
-    public static String getDurabilityTag(ItemMeta itemMeta) {
-        if (getFromItemSettings(itemMeta, "durability_tag") != null) {
-            return (String) getFromItemSettings(itemMeta, "durability_tag");
+    public static String getDurabilityTag(final ItemMeta itemMeta) {
+        if (ItemUtils.getFromItemSettings(itemMeta, "durability_tag") != null) {
+            return (String) ItemUtils.getFromItemSettings(itemMeta, "durability_tag");
         }
         return "";
     }
 
-    public static boolean isEquipable(Material material){
-        if (material.name().endsWith("_CHESTPLATE") || material.name().endsWith("_LEGGINGS") || material.name().endsWith("_HELMET") || material.name().endsWith("_BOOTS") || material.name().endsWith("_HEAD") || material.name().endsWith("SKULL")) {
+    public static boolean isEquipable(final Material material){
+        if (material.name().endsWith("_CHESTPLATE") || material.name().endsWith("_LEGGINGS") ||
+                material.name().endsWith("_HELMET") || material.name().endsWith("_BOOTS") ||
+                material.name().endsWith("_HEAD") || material.name().endsWith("SKULL")) {
             return true;
         }
         switch (material) {
@@ -525,7 +543,7 @@ public class ItemUtils {
         return false;
     }
 
-    public static boolean isEquipable(Material material, ArmorType type) {
+    public static boolean isEquipable(final Material material, final ArmorType type) {
         switch (type) {
             case HELMET:
                 return material.name().endsWith("_HELMET") || material.name().endsWith("_HEAD") || material.name().endsWith("SKULL");
@@ -539,7 +557,8 @@ public class ItemUtils {
         return false;
     }
 
-    public static boolean isAirOrNull(ItemStack item) {
+    public static boolean isAirOrNull(final ItemStack item) {
         return item == null || item.getType().equals(Material.AIR);
     }
+
 }
